@@ -1,0 +1,206 @@
+---
+const defaultWhatsApp = "https://wa.me/51999999999";
+---
+
+<section id="prebook" class="mx-auto w-full max-w-5xl scroll-mt-28 px-4 py-16 sm:px-6 md:py-24 lg:px-8">
+  <div class="rounded-3xl border border-slate-800 bg-slate-900/60 p-6 sm:p-8">
+    <p class="text-xs font-medium uppercase tracking-[0.2em] text-gold sm:text-sm">Pre-reserva</p>
+    <h2 class="mt-3 text-2xl font-semibold text-sillar sm:text-3xl">Cotiza tu experiencia en minutos</h2>
+    <p class="mt-3 max-w-2xl text-sm leading-relaxed text-slate-300 sm:text-base">
+      Primero consultamos disponibilidad real y luego generamos tu solicitud por WhatsApp con fechas y cantidad de huespedes.
+    </p>
+
+    <form id="prebooking-form" class="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2">
+      <label class="flex flex-col gap-2">
+        <span class="text-sm text-slate-200">Nombre</span>
+        <input
+          id="guest-name"
+          type="text"
+          required
+          class="rounded-xl border border-slate-700 bg-slate-950/70 px-4 py-3 text-sm text-sillar outline-none transition focus:border-gold"
+          placeholder="Tu nombre"
+        />
+      </label>
+
+      <label class="flex flex-col gap-2">
+        <span class="text-sm text-slate-200">Check-in</span>
+        <input
+          id="checkin-date"
+          type="date"
+          required
+          class="rounded-xl border border-slate-700 bg-slate-950/70 px-4 py-3 text-sm text-sillar outline-none transition focus:border-gold"
+        />
+      </label>
+
+      <label class="flex flex-col gap-2">
+        <span class="text-sm text-slate-200">Check-out</span>
+        <input
+          id="checkout-date"
+          type="date"
+          required
+          class="rounded-xl border border-slate-700 bg-slate-950/70 px-4 py-3 text-sm text-sillar outline-none transition focus:border-gold"
+        />
+      </label>
+
+      <label class="flex flex-col gap-2">
+        <span class="text-sm text-slate-200">Huespedes</span>
+        <select
+          id="guests"
+          class="rounded-xl border border-slate-700 bg-slate-950/70 px-4 py-3 text-sm text-sillar outline-none transition focus:border-gold"
+        >
+          <option value="1">1 huesped</option>
+          <option value="2" selected>2 huespedes</option>
+          <option value="3">3 huespedes</option>
+          <option value="4">4 huespedes</option>
+        </select>
+      </label>
+
+      <label class="flex flex-col gap-2 md:col-span-2">
+        <span class="text-sm text-slate-200">Mensaje adicional (opcional)</span>
+        <textarea
+          id="extra-message"
+          rows="4"
+          class="rounded-xl border border-slate-700 bg-slate-950/70 px-4 py-3 text-sm text-sillar outline-none transition focus:border-gold"
+          placeholder="Ejemplo: celebracion especial, preferencias, hora estimada de llegada."
+        ></textarea>
+      </label>
+
+      <div class="md:col-span-2">
+        <p id="availability-status" class="mb-4 hidden rounded-xl border px-4 py-3 text-sm"></p>
+        <button
+          type="submit"
+          class="inline-flex w-full items-center justify-center rounded-full bg-gold px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-amber-300 sm:w-auto"
+        >
+          Consultar disponibilidad y enviar por WhatsApp
+        </button>
+      </div>
+    </form>
+
+    <noscript>
+      <p class="mt-4 text-sm text-slate-300">
+        Activa JavaScript para generar el mensaje automatico o reserva directamente aqui:
+        <a href={defaultWhatsApp} target="_blank" rel="noopener noreferrer" class="text-gold underline">
+          WhatsApp reservas
+        </a>
+      </p>
+    </noscript>
+  </div>
+</section>
+
+<script>
+  const form = document.querySelector("#prebooking-form");
+
+  const getElement = (selector: string) => document.querySelector(selector);
+
+  const setStatus = (message: string, type: "info" | "success" | "error" = "info") => {
+    const statusElement = document.querySelector("#availability-status");
+    if (!(statusElement instanceof HTMLElement)) {
+      return;
+    }
+
+    statusElement.classList.remove(
+      "hidden",
+      "border-emerald-500/40",
+      "bg-emerald-500/10",
+      "text-emerald-100",
+      "border-rose-500/40",
+      "bg-rose-500/10",
+      "text-rose-100",
+      "border-slate-600",
+      "bg-slate-900/70",
+      "text-slate-200"
+    );
+
+    if (type === "success") {
+      statusElement.classList.add("border-emerald-500/40", "bg-emerald-500/10", "text-emerald-100");
+    } else if (type === "error") {
+      statusElement.classList.add("border-rose-500/40", "bg-rose-500/10", "text-rose-100");
+    } else {
+      statusElement.classList.add("border-slate-600", "bg-slate-900/70", "text-slate-200");
+    }
+
+    statusElement.textContent = message;
+  };
+
+  if (form instanceof HTMLFormElement) {
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const submitButton = form.querySelector('button[type="submit"]');
+      const name = (getElement("#guest-name") as HTMLInputElement | null)?.value.trim();
+      const checkin = (getElement("#checkin-date") as HTMLInputElement | null)?.value;
+      const checkout = (getElement("#checkout-date") as HTMLInputElement | null)?.value;
+      const guests = (getElement("#guests") as HTMLSelectElement | null)?.value;
+      const extra = (getElement("#extra-message") as HTMLTextAreaElement | null)?.value.trim();
+
+      if (!name || !checkin || !checkout || !guests) {
+        setStatus("Completa nombre, fechas y cantidad de huespedes.", "error");
+        return;
+      }
+
+      if (submitButton instanceof HTMLButtonElement) {
+        submitButton.disabled = true;
+        submitButton.textContent = "Consultando disponibilidad...";
+      }
+
+      setStatus("Validando fechas y disponibilidad...", "info");
+
+      fetch("/api/availability", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          checkIn: checkin,
+          checkOut: checkout,
+          guests: Number(guests),
+        }),
+      })
+        .then(async (response) => {
+          const data = await response.json();
+          if (!response.ok || !data.ok) {
+            setStatus(data.message ?? "No se pudo validar la disponibilidad.", "error");
+            return;
+          }
+
+          if (!data.available) {
+            setStatus(
+              "No hay disponibilidad para esas fechas. Escribenos por WhatsApp para sugerirte alternativas.",
+              "error"
+            );
+            return;
+          }
+
+          setStatus(
+            `Disponible: ${data.availableDomes} domo(s). Estimado: S/ ${data.totalEstimate} por ${data.nights} noche(s).`,
+            "success"
+          );
+
+          const messageLines = [
+            "Hola Colca Star Domes, quiero realizar una pre-reserva.",
+            `Nombre: ${name}`,
+            `Check-in: ${checkin}`,
+            `Check-out: ${checkout}`,
+            `Huespedes: ${guests}`,
+            `Disponibilidad confirmada: ${data.availableDomes} domo(s)`,
+            `Estimado total: S/ ${data.totalEstimate}`,
+          ];
+
+          if (extra) {
+            messageLines.push(`Mensaje adicional: ${extra}`);
+          }
+
+          const encodedMessage = encodeURIComponent(messageLines.join("\n"));
+          const whatsappUrl = `https://wa.me/51999999999?text=${encodedMessage}`;
+          window.open(whatsappUrl, "_blank", "noopener,noreferrer");
+        })
+        .catch(() => {
+          setStatus("No pudimos consultar disponibilidad ahora. Intenta nuevamente.", "error");
+        })
+        .finally(() => {
+          if (submitButton instanceof HTMLButtonElement) {
+            submitButton.disabled = false;
+            submitButton.textContent = "Consultar disponibilidad y enviar por WhatsApp";
+          }
+        });
+    });
+  }
+</script>
+
