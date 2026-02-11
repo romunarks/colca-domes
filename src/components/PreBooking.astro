@@ -123,7 +123,7 @@ const defaultWhatsApp = "https://wa.me/51999999999";
   };
 
   if (form instanceof HTMLFormElement) {
-    form.addEventListener("submit", (event) => {
+    form.addEventListener("submit", async (event) => {
       event.preventDefault();
       const submitButton = form.querySelector('button[type="submit"]');
       const name = (getElement("#guest-name") as HTMLInputElement | null)?.value.trim();
@@ -144,62 +144,87 @@ const defaultWhatsApp = "https://wa.me/51999999999";
 
       setStatus("Validando fechas y disponibilidad...", "info");
 
-      fetch("/api/availability", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          checkIn: checkin,
-          checkOut: checkout,
-          guests: Number(guests),
-        }),
-      })
-        .then(async (response) => {
-          const data = await response.json();
-          if (!response.ok || !data.ok) {
-            setStatus(data.message ?? "No se pudo validar la disponibilidad.", "error");
-            return;
-          }
-
-          if (!data.available) {
-            setStatus(
-              "No hay disponibilidad para esas fechas. Escribenos por WhatsApp para sugerirte alternativas.",
-              "error"
-            );
-            return;
-          }
-
-          setStatus(
-            `Disponible: ${data.availableDomes} domo(s). Estimado: S/ ${data.totalEstimate} por ${data.nights} noche(s).`,
-            "success"
-          );
-
-          const messageLines = [
-            "Hola Colca Star Domes, quiero realizar una pre-reserva.",
-            `Nombre: ${name}`,
-            `Check-in: ${checkin}`,
-            `Check-out: ${checkout}`,
-            `Huespedes: ${guests}`,
-            `Disponibilidad confirmada: ${data.availableDomes} domo(s)`,
-            `Estimado total: S/ ${data.totalEstimate}`,
-          ];
-
-          if (extra) {
-            messageLines.push(`Mensaje adicional: ${extra}`);
-          }
-
-          const encodedMessage = encodeURIComponent(messageLines.join("\n"));
-          const whatsappUrl = `https://wa.me/51999999999?text=${encodedMessage}`;
-          window.open(whatsappUrl, "_blank", "noopener,noreferrer");
-        })
-        .catch(() => {
-          setStatus("No pudimos consultar disponibilidad ahora. Intenta nuevamente.", "error");
-        })
-        .finally(() => {
-          if (submitButton instanceof HTMLButtonElement) {
-            submitButton.disabled = false;
-            submitButton.textContent = "Consultar disponibilidad y enviar por WhatsApp";
-          }
+      try {
+        const availabilityResponse = await fetch("/api/availability", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            checkInRaw: checkin,
+            checkOutRaw: checkout,
+            guests: Number(guests),
+          }),
         });
+
+        const availabilityData = await availabilityResponse.json();
+
+        if (!availabilityResponse.ok || !availabilityData.ok) {
+          setStatus(availabilityData.message ?? "No se pudo validar la disponibilidad.", "error");
+          return;
+        }
+
+        if (!availabilityData.available) {
+          setStatus(
+            "No hay disponibilidad para esas fechas. Escribenos por WhatsApp para sugerirte alternativas.",
+            "error"
+          );
+          return;
+        }
+
+        setStatus(
+          `Disponible: ${availabilityData.availableDomes} domo(s). Estimado: S/ ${availabilityData.totalEstimate} por ${availabilityData.nights} noche(s).`,
+          "success"
+        );
+
+        const leadResponse = await fetch("/api/prebook", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            fullName: name,
+            checkInRaw: checkin,
+            checkOutRaw: checkout,
+            guests: Number(guests),
+            notes: extra ?? "",
+            availabilitySnapshot: {
+              availableDomes: availabilityData.availableDomes,
+              nights: availabilityData.nights,
+              totalEstimate: availabilityData.totalEstimate,
+              nightlyRate: availabilityData.nightlyRate,
+            },
+          }),
+        });
+
+        const leadData = await leadResponse.json();
+        if (!leadResponse.ok || !leadData.ok) {
+          setStatus("Disponibilidad encontrada, pero no pudimos registrar la pre-reserva. Intenta otra vez.", "error");
+          return;
+        }
+
+        const messageLines = [
+          "Hola Colca Star Domes, quiero realizar una pre-reserva.",
+          `Nombre: ${name}`,
+          `Check-in: ${checkin}`,
+          `Check-out: ${checkout}`,
+          `Huespedes: ${guests}`,
+          `Disponibilidad confirmada: ${availabilityData.availableDomes} domo(s)`,
+          `Estimado total: S/ ${availabilityData.totalEstimate}`,
+          `Codigo interno de pre-reserva: ${leadData.leadId}`,
+        ];
+
+        if (extra) {
+          messageLines.push(`Mensaje adicional: ${extra}`);
+        }
+
+        const encodedMessage = encodeURIComponent(messageLines.join("\n"));
+        const whatsappUrl = `https://wa.me/51999999999?text=${encodedMessage}`;
+        window.open(whatsappUrl, "_blank", "noopener,noreferrer");
+      } catch {
+        setStatus("No pudimos procesar tu solicitud ahora. Intenta nuevamente en unos minutos.", "error");
+      } finally {
+        if (submitButton instanceof HTMLButtonElement) {
+          submitButton.disabled = false;
+          submitButton.textContent = "Consultar disponibilidad y enviar por WhatsApp";
+        }
+      }
     });
   }
 </script>
