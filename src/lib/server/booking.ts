@@ -15,6 +15,19 @@ export type AvailabilityResult = {
   totalEstimate: number;
 };
 
+export type BookingLeadRow = {
+  id: string;
+  full_name: string;
+  check_in: string;
+  check_out: string;
+  guests: number;
+  status: "new" | "contacted" | "qualified" | "closed";
+  source: string;
+  notes: string | null;
+  created_at: string;
+  availability_snapshot: Record<string, unknown> | null;
+};
+
 export type ValidationError = {
   ok: false;
   message: string;
@@ -168,5 +181,21 @@ export const createBookingLead = async (
   }
 
   return data;
+};
+
+export const listRecentBookingLeads = async (supabase: SupabaseClient, limit = 50): Promise<BookingLeadRow[]> => {
+  const { data, error } = await supabase
+    .from("booking_leads")
+    .select(
+      "id, full_name, check_in, check_out, guests, status, source, notes, created_at, availability_snapshot"
+    )
+    .order("created_at", { ascending: false })
+    .limit(limit);
+
+  if (error) {
+    throw new Error(`Failed to list booking leads: ${error.message}`);
+  }
+
+  return (data ?? []) as BookingLeadRow[];
 };
 

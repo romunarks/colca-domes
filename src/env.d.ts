@@ -5,6 +5,7 @@ interface ImportMetaEnv {
   readonly SUPABASE_SERVICE_ROLE_KEY?: string;
   readonly TOTAL_DOMES?: string;
   readonly BASE_RATE_PEN?: string;
+  readonly ADMIN_DASHBOARD_KEY?: string;
 }
 
 interface ImportMeta {

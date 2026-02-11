@@ -1,0 +1,154 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { getSupabaseAdmin } from "../../lib/server/supabase";
+import { listRecentBookingLeads, type BookingLeadRow } from "../../lib/server/booking";
+
+const requiredKey = import.meta.env.ADMIN_DASHBOARD_KEY?.trim() ?? "";
+const providedKey = Astro.url.searchParams.get("key")?.trim() ?? "";
+const hasAccess = !requiredKey || providedKey === requiredKey;
+
+let leads: BookingLeadRow[] = [];
+let loadError = "";
+
+if (hasAccess) {
+  try {
+    const supabase = getSupabaseAdmin();
+    leads = await listRecentBookingLeads(supabase, 100);
+  } catch (error) {
+    loadError = error instanceof Error ? error.message : "No se pudo cargar la lista de leads.";
+  }
+}
+
+const totals = {
+  all: leads.length,
+  new: leads.filter((lead) => lead.status === "new").length,
+  contacted: leads.filter((lead) => lead.status === "contacted").length,
+  closed: leads.filter((lead) => lead.status === "closed").length,
+};
+
+const formatDateTime = (value: string) =>
+  new Date(value).toLocaleString("es-PE", {
+    dateStyle: "medium",
+    timeStyle: "short",
+  });
+---
+
+<Layout title="Admin Leads | Colca Star Domes" description="Vista interna de pre-reservas registradas desde la web.">
+  <section class="mx-auto w-full max-w-7xl px-4 pb-14 pt-24 sm:px-6 lg:px-8">
+    <div class="mb-8 flex flex-wrap items-end justify-between gap-4">
+      <div>
+        <p class="text-xs uppercase tracking-[0.2em] text-gold">Admin dashboard</p>
+        <h1 class="mt-2 text-3xl font-semibold text-sillar">Leads de pre-reserva</h1>
+        <p class="mt-2 text-sm text-slate-300">
+          Esta vista muestra los leads guardados en base de datos antes de abrir WhatsApp.
+        </p>
+      </div>
+      <a
+        href="/"
+        class="inline-flex items-center justify-center rounded-full border border-gold px-4 py-2 text-sm font-medium text-gold transition hover:bg-gold/10"
+      >
+        Volver a la landing
+      </a>
+    </div>
+
+    {
+      !hasAccess && (
+        <div class="rounded-2xl border border-rose-500/40 bg-rose-500/10 p-5 text-rose-100">
+          <p class="text-sm font-medium">Acceso restringido</p>
+          <p class="mt-2 text-sm">
+            Configura `ADMIN_DASHBOARD_KEY` en `.env` y abre esta URL con `?key=tu_clave`.
+          </p>
+        </div>
+      )
+    }
+
+    {
+      hasAccess && loadError && (
+        <div class="rounded-2xl border border-rose-500/40 bg-rose-500/10 p-5 text-rose-100">
+          <p class="text-sm font-medium">No se pudo cargar la data</p>
+          <p class="mt-2 text-sm">{loadError}</p>
+        </div>
+      )
+    }
+
+    {
+      hasAccess && !loadError && (
+        <>
+          <div class="grid grid-cols-2 gap-4 md:grid-cols-4">
+            <article class="rounded-2xl border border-slate-800 bg-slate-900/60 p-4">
+              <p class="text-xs uppercase tracking-[0.15em] text-slate-400">Total leads</p>
+              <p class="mt-2 text-2xl font-semibold text-sillar">{totals.all}</p>
+            </article>
+            <article class="rounded-2xl border border-slate-800 bg-slate-900/60 p-4">
+              <p class="text-xs uppercase tracking-[0.15em] text-slate-400">Nuevos</p>
+              <p class="mt-2 text-2xl font-semibold text-amber-300">{totals.new}</p>
+            </article>
+            <article class="rounded-2xl border border-slate-800 bg-slate-900/60 p-4">
+              <p class="text-xs uppercase tracking-[0.15em] text-slate-400">Contactados</p>
+              <p class="mt-2 text-2xl font-semibold text-sky-300">{totals.contacted}</p>
+            </article>
+            <article class="rounded-2xl border border-slate-800 bg-slate-900/60 p-4">
+              <p class="text-xs uppercase tracking-[0.15em] text-slate-400">Cerrados</p>
+              <p class="mt-2 text-2xl font-semibold text-emerald-300">{totals.closed}</p>
+            </article>
+          </div>
+
+          <div class="mt-6 overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/60">
+            <div class="overflow-x-auto">
+              <table class="min-w-full text-left text-sm">
+                <thead class="bg-slate-950/70 text-xs uppercase tracking-[0.12em] text-slate-400">
+                  <tr>
+                    <th class="px-4 py-3">Fecha</th>
+                    <th class="px-4 py-3">Lead</th>
+                    <th class="px-4 py-3">Estadia</th>
+                    <th class="px-4 py-3">Huespedes</th>
+                    <th class="px-4 py-3">Estado</th>
+                    <th class="px-4 py-3">Estimado</th>
+                    <th class="px-4 py-3">Notas</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-800">
+                  {
+                    leads.length === 0 ? (
+                      <tr>
+                        <td colspan="7" class="px-4 py-6 text-center text-slate-300">
+                          Aun no hay leads registrados.
+                        </td>
+                      </tr>
+                    ) : (
+                      leads.map((lead) => (
+                        <tr class="align-top text-slate-100">
+                          <td class="px-4 py-3 text-xs text-slate-300">{formatDateTime(lead.created_at)}</td>
+                          <td class="px-4 py-3">
+                            <p class="font-medium">{lead.full_name}</p>
+                            <p class="text-xs text-slate-400">{lead.id}</p>
+                          </td>
+                          <td class="px-4 py-3 text-xs sm:text-sm">
+                            {lead.check_in} → {lead.check_out}
+                          </td>
+                          <td class="px-4 py-3">{lead.guests}</td>
+                          <td class="px-4 py-3">
+                            <span class="rounded-full border border-slate-700 px-2 py-1 text-xs capitalize text-slate-200">
+                              {lead.status}
+                            </span>
+                          </td>
+                          <td class="px-4 py-3 text-xs sm:text-sm">
+                            {typeof lead.availability_snapshot?.totalEstimate === "number"
+                              ? `S/ ${lead.availability_snapshot.totalEstimate}`
+                              : "-"}
+                          </td>
+                          <td class="px-4 py-3 text-xs text-slate-300">{lead.notes ?? "-"}</td>
+                        </tr>
+                      ))
+                    )
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </>
+      )
+    }
+  </section>
+</Layout>
+
