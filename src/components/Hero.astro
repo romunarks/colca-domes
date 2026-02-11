@@ -1,36 +1,54 @@
-<section
-  class="relative flex min-h-screen items-center overflow-hidden bg-gradient-to-b from-slate-950 via-slate-900 to-slate-900 px-4 pb-20 pt-24 sm:px-6 lg:px-8"
->
+<section class="relative min-h-screen overflow-hidden bg-gradient-to-b from-slate-950 via-slate-900 to-slate-900 px-4 pb-20 pt-24 sm:px-6 lg:px-8">
   <div
     aria-hidden="true"
-    class="pointer-events-none absolute inset-0 opacity-30"
+    class="pointer-events-none absolute inset-0 opacity-35"
     style="background-image: radial-gradient(circle at 20% 20%, rgba(251, 191, 36, 0.28) 1px, transparent 1px), radial-gradient(circle at 70% 40%, rgba(248, 250, 252, 0.3) 1px, transparent 1px), radial-gradient(circle at 40% 80%, rgba(248, 250, 252, 0.25) 1px, transparent 1px); background-size: 140px 140px, 180px 180px, 220px 220px;"
   ></div>
 
-  <div class="relative mx-auto w-full max-w-5xl text-center">
-    <p class="text-xs font-medium uppercase tracking-[0.2em] text-gold sm:text-sm">
-      Glamping de lujo en el Valle del Colca
-    </p>
+  <div class="relative mx-auto grid min-h-[calc(100vh-8rem)] w-full max-w-6xl items-center gap-10 lg:grid-cols-2">
+    <div class="text-center lg:text-left">
+      <p class="text-xs font-medium uppercase tracking-[0.2em] text-gold sm:text-sm">
+        Glamping de lujo en el Valle del Colca
+      </p>
 
-    <h1 class="mt-5 text-4xl font-semibold leading-tight text-sillar sm:text-5xl lg:text-6xl">
-      Sleep Under the Milky Way
-    </h1>
+      <h1 class="mt-5 text-4xl font-semibold leading-tight text-sillar sm:text-5xl lg:text-6xl">
+        Sleep Under the Milky Way
+      </h1>
 
-    <p class="mx-auto mt-6 max-w-2xl text-sm leading-relaxed text-slate-200 sm:text-base">
-      Descubre noches silenciosas, domos geodésicos de diseño y cielos perfectos para astrofotografía
-      en Arequipa. Una experiencia privada, íntima y extraordinaria.
-    </p>
+      <p class="mx-auto mt-6 max-w-2xl text-sm leading-relaxed text-slate-200 sm:text-base lg:mx-0">
+        Descubre noches silenciosas, domos geodesicos de diseno y cielos perfectos para astrofotografia
+        en Arequipa. Una experiencia privada, intima y extraordinaria.
+      </p>
 
-    <div class="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-      <a
-        href="#features"
-        class="inline-flex items-center justify-center rounded-full border border-gold px-6 py-3 text-sm font-medium text-gold transition hover:bg-gold/10 md:text-base"
-      >
-        Explorar experiencia
-      </a>
-      <a href="#gallery" class="text-sm text-slate-200 underline-offset-4 transition hover:text-gold hover:underline">
-        Ver galeria de domos
-      </a>
+      <div class="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row lg:justify-start">
+        <a
+          href="#features"
+          class="inline-flex items-center justify-center rounded-full border border-gold px-6 py-3 text-sm font-medium text-gold transition hover:bg-gold/10 md:text-base"
+        >
+          Explorar experiencia
+        </a>
+        <a href="#gallery" class="text-sm text-slate-200 underline-offset-4 transition hover:text-gold hover:underline">
+          Ver galeria de domos
+        </a>
+      </div>
+    </div>
+
+    <div class="relative mx-auto w-full max-w-md lg:max-w-none">
+      <div class="absolute -inset-3 rounded-3xl bg-gradient-to-tr from-gold/20 via-transparent to-slate-200/10 blur-xl"></div>
+      <figure class="relative overflow-hidden rounded-3xl border border-slate-700/80 bg-slate-900/70 shadow-2xl shadow-black/40">
+        <img
+          src="https://images.pexels.com/photos/260922/pexels-photo-260922.jpeg?auto=compress&cs=tinysrgb&w=1200"
+          alt="Domo geodesico iluminado bajo cielo estrellado"
+          loading="eager"
+          decoding="async"
+          class="h-[22rem] w-full object-cover sm:h-[26rem] lg:h-[34rem]"
+        />
+        <div class="absolute inset-0 bg-gradient-to-t from-slate-950/75 via-slate-900/20 to-transparent"></div>
+        <figcaption class="absolute bottom-0 w-full p-5 text-left">
+          <p class="text-xs uppercase tracking-[0.18em] text-gold">Colca Star Domes</p>
+          <p class="mt-2 text-sm text-slate-100 sm:text-base">Noches privadas de lujo y observacion estelar en altura.</p>
+        </figcaption>
+      </figure>
     </div>
   </div>
 </section>

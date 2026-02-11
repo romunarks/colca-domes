@@ -1,32 +1,32 @@
 ---
 const images = [
   {
-    src: "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1200&q=80",
+    src: "https://images.pexels.com/photos/1933316/pexels-photo-1933316.jpeg?auto=compress&cs=tinysrgb&w=1200",
     alt: "Cielo nocturno estrellado en montana",
     tall: true,
   },
   {
-    src: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80",
+    src: "https://images.pexels.com/photos/1309644/pexels-photo-1309644.jpeg?auto=compress&cs=tinysrgb&w=1200",
     alt: "Domo de glamping con iluminacion tenue",
     tall: false,
   },
   {
-    src: "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1200&q=80",
+    src: "https://images.pexels.com/photos/1624496/pexels-photo-1624496.jpeg?auto=compress&cs=tinysrgb&w=1200",
     alt: "Vista panoramica del valle andino",
     tall: false,
   },
   {
-    src: "https://images.unsplash.com/photo-1472396961693-142e6e269027?auto=format&fit=crop&w=1200&q=80",
+    src: "https://images.pexels.com/photos/355465/pexels-photo-355465.jpeg?auto=compress&cs=tinysrgb&w=1200",
     alt: "Paisaje natural al atardecer en altura",
     tall: true,
   },
   {
-    src: "https://images.unsplash.com/photo-1493244040629-496f6d136cc3?auto=format&fit=crop&w=1200&q=80",
+    src: "https://images.pexels.com/photos/208745/pexels-photo-208745.jpeg?auto=compress&cs=tinysrgb&w=1200",
     alt: "Reflejos nocturnos y ambiente de lujo",
     tall: false,
   },
   {
-    src: "https://images.unsplash.com/photo-1511497584788-876760111969?auto=format&fit=crop&w=1200&q=80",
+    src: "https://images.pexels.com/photos/414144/pexels-photo-414144.jpeg?auto=compress&cs=tinysrgb&w=1200",
     alt: "Via lactea visible en cielo despejado",
     tall: false,
   },
@@ -50,7 +50,14 @@ const images = [
             image.tall ? "md:row-span-2" : "md:row-span-1"
           }`}
         >
-          <img src={image.src} alt={image.alt} loading="lazy" class="h-full w-full object-cover" />
+          <img
+            src={image.src}
+            alt={image.alt}
+            loading="lazy"
+            decoding="async"
+            onerror="this.onerror=null;this.src='https://placehold.co/1200x900/0f172a/f8fafc?text=Colca+Star+Domes';"
+            class="h-full w-full object-cover transition duration-500 hover:scale-[1.03]"
+          />
         </figure>
       ))
     }
