@@ -1,0 +1,59 @@
+---
+const images = [
+  {
+    src: "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1200&q=80",
+    alt: "Cielo nocturno estrellado en montana",
+    tall: true,
+  },
+  {
+    src: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80",
+    alt: "Domo de glamping con iluminacion tenue",
+    tall: false,
+  },
+  {
+    src: "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1200&q=80",
+    alt: "Vista panoramica del valle andino",
+    tall: false,
+  },
+  {
+    src: "https://images.unsplash.com/photo-1472396961693-142e6e269027?auto=format&fit=crop&w=1200&q=80",
+    alt: "Paisaje natural al atardecer en altura",
+    tall: true,
+  },
+  {
+    src: "https://images.unsplash.com/photo-1493244040629-496f6d136cc3?auto=format&fit=crop&w=1200&q=80",
+    alt: "Reflejos nocturnos y ambiente de lujo",
+    tall: false,
+  },
+  {
+    src: "https://images.unsplash.com/photo-1511497584788-876760111969?auto=format&fit=crop&w=1200&q=80",
+    alt: "Via lactea visible en cielo despejado",
+    tall: false,
+  },
+];
+---
+
+<section id="gallery" class="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6 md:py-24 lg:px-8">
+  <div class="mb-10 text-center">
+    <p class="text-xs font-medium uppercase tracking-[0.2em] text-gold sm:text-sm">Galeria</p>
+    <h2 class="mt-3 text-2xl font-semibold text-sillar sm:text-3xl">Domos bajo millones de estrellas</h2>
+    <p class="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-slate-300 sm:text-base">
+      Espacios geodesicos de lujo, paisajes andinos y noches ideales para astrofotografia.
+    </p>
+  </div>
+
+  <div class="grid grid-cols-2 gap-4 md:grid-cols-3 md:auto-rows-[180px]">
+    {
+      images.map((image) => (
+        <figure
+          class={`overflow-hidden rounded-2xl border border-slate-800 bg-slate-800/70 ${
+            image.tall ? "md:row-span-2" : "md:row-span-1"
+          }`}
+        >
+          <img src={image.src} alt={image.alt} loading="lazy" class="h-full w-full object-cover" />
+        </figure>
+      ))
+    }
+  </div>
+</section>
+
