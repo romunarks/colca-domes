@@ -1,17 +1,18 @@
 ---
+import Layout from "../layouts/Layout.astro";
+import Hero from "../components/Hero.astro";
+import Features from "../components/Features.astro";
+import Gallery from "../components/Gallery.astro";
+import StickyFooter from "../components/StickyFooter.astro";
 
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<Layout
+  title="Colca Star Domes | Glamping de lujo en Arequipa"
+  description="Vive una experiencia de glamping de lujo en Colca Star Domes: noches de cielo profundo, domos exclusivos y confort premium en el Valle del Colca."
+>
+  <Hero />
+  <Features />
+  <Gallery />
+  <StickyFooter />
+</Layout>
