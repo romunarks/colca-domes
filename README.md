@@ -1,23 +1,51 @@
-# Colca Domes: Sustainable Architectural Visualization 🏔️
+# Colca Domes: Full-Stack Sustainable Housing Platform 🏔️
 
-This repository contains a web-based application developed for OPIT. The project integrates modern web technologies to present a sustainable housing solution located in the Colca Canyon, Arequipa.
+This project is a high-performance web application developed for **OPIT - Open Institute of Technology**. It serves as a digital ecosystem for exploring and managing sustainable dome-shaped accommodations in the Colca Canyon, Peru.
 
-## 🎯 Project Objective
-To build a high-performance, responsive interface that demonstrates the structural advantages of dome architecture in high-altitude environments, focusing on code maintainability and type safety.
+## 🎯 Project Vision
+To bridge the gap between sustainable architecture and modern software engineering by providing a type-safe, database-driven platform that handles real-time data and user interactions.
 
-## 🛠️ Tech Stack & Engineering Decisions
+## 🛠️ Technical Architecture & Stack
 
-* **TypeScript (TS):** Implemented to ensure rigorous type checking and to minimize runtime errors. All components and data structures follow strict typing standards.
-* **HTML5 & Semantic Web:** Used to build a meaningful document structure, improving accessibility (A11y) and SEO.
-* **CSS3 & Responsive Design:** Leveraging **Flexbox** and **Grid** layouts. The project follows a **Mobile-First** strategy using Media Queries for seamless adaptation.
-* **Modular Architecture:** The codebase is structured to facilitate future scalability and integration with backend services.
+### **Frontend & Logic**
+* **TypeScript (TS):** Implementing strict typing across the application to ensure memory safety, reduce runtime bugs, and improve developer experience.
+* **HTML5 & CSS3:** Utilizing advanced layouts (Flexbox/Grid) with a **Mobile-First** approach through optimized Media Queries.
+* **DOM Manipulation:** Efficient event handling for a dynamic User Experience.
 
-## 🚀 Key Technical Features
-* **Type-Safe Interfaces:** Defined models for architectural data and UI states.
-* **Performance Optimization:** Efficient asset loading and clean CSS architecture.
-* **Cross-Browser Compatibility:** Tested across modern rendering engines.
+### **Backend-as-a-Service (BaaS)**
+* **Supabase:** The core engine for the backend infrastructure.
+    * **PostgreSQL Database:** Storing complex data structures for dome features, locations, and user data.
+    * **Supabase Auth:** (If implemented) Secure user authentication and session management.
+    * **Real-time Subscriptions:** Leveraging Supabase's capabilities for instant data updates.
 
-## ⚙️ Installation & Development
-1. **Clone the repository:**
-   ```bash
-   git clone [https://github.com/romunarks/colca-domes.git](https://github.com/romunarks/colca-domes.git)
+## 🚀 Key Engineering Features
+* **Database Integration:** Seamless connection between the TypeScript frontend and the Supabase PostgreSQL backend.
+* **Type-Safe Schemas:** Custom interfaces that mirror the database structure for end-to-end type safety.
+* **Responsive Design:** Fully adaptive UI designed to perform in low-bandwidth environments (crucial for remote locations like Colca).
+* **Scalable Structure:** Modular code organization following clean code principles.
+
+## ⚙️ Development Setup
+
+1.  **Clone the repository:**
+    ```bash
+    git clone [https://github.com/romunarks/colca-domes.git](https://github.com/romunarks/colca-domes.git)
+    ```
+2.  **Environment Variables:**
+    Create a `.env` file and add your Supabase credentials:
+    ```env
+    SUPABASE_URL=your_project_url
+    SUPABASE_KEY=your_anon_key
+    ```
+3.  **Install Dependencies:**
+    ```bash
+    npm install
+    ```
+4.  **Build & Transpile:**
+    ```bash
+    tsc
+    ```
+
+## 👤 Author
+**Rodrigo Prieto Munar**
+*Student at OPIT - Open Institute of Technology*
+GitHub: [@romunarks](https://github.com/romunarks)
