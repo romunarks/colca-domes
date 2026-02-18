@@ -1,6 +1,6 @@
 # Colca Domes Project 🏔️
 
-This project is a web-based application developed for [Your Course Name]. It showcases a sustainable architectural proposal for dome-shaped lodging in the Colca Canyon, Peru.
+This project is a web-based application developed for WEB DEV. It showcases a sustainable architectural proposal for dome-shaped lodging in the Colca Canyon, Peru.
 
 ## 🚀 Overview
 The goal of this project is to provide a responsive and interactive user interface where users can explore the dome features, location details, and booking options.
