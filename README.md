@@ -1,25 +1,23 @@
-# Colca Domes Project 🏔️
+# Colca Domes: Sustainable Architectural Visualization 🏔️
 
-This project is a web-based application developed for WEB DEV. It showcases a sustainable architectural proposal for dome-shaped lodging in the Colca Canyon, Peru.
+This repository contains a web-based application developed for OPIT. The project integrates modern web technologies to present a sustainable housing solution located in the Colca Canyon, Arequipa.
 
-## 🚀 Overview
-The goal of this project is to provide a responsive and interactive user interface where users can explore the dome features, location details, and booking options.
+## 🎯 Project Objective
+To build a high-performance, responsive interface that demonstrates the structural advantages of dome architecture in high-altitude environments, focusing on code maintainability and type safety.
 
-## 🛠️ Built With
-* **HTML5:** Semantic structure for better SEO and accessibility.
-* **CSS3:** Custom styling including Flexbox and CSS Grid.
-* **Media Queries:** Fully responsive design for mobile, tablet, and desktop views.
-* **JavaScript (Optional - add if you used it):** DOM manipulation for interactive elements.
+## 🛠️ Tech Stack & Engineering Decisions
 
-## 📸 Features
-* **Responsive Design:** Optimized for all screen sizes.
-* **Hero Section:** High-impact visuals of the Colca Valley.
-* **Informational Sections:** Detailed breakdown of the dome architecture and sustainability.
+* **TypeScript (TS):** Implemented to ensure rigorous type checking and to minimize runtime errors. All components and data structures follow strict typing standards.
+* **HTML5 & Semantic Web:** Used to build a meaningful document structure, improving accessibility (A11y) and SEO.
+* **CSS3 & Responsive Design:** Leveraging **Flexbox** and **Grid** layouts. The project follows a **Mobile-First** strategy using Media Queries for seamless adaptation.
+* **Modular Architecture:** The codebase is structured to facilitate future scalability and integration with backend services.
 
-## ⚙️ How to Run
-1. Clone the repository:
-   `git clone https://github.com/romunarks/colca-domes.git`
-2. Open `index.html` in your preferred browser.
+## 🚀 Key Technical Features
+* **Type-Safe Interfaces:** Defined models for architectural data and UI states.
+* **Performance Optimization:** Efficient asset loading and clean CSS architecture.
+* **Cross-Browser Compatibility:** Tested across modern rendering engines.
 
-## 👤 Author
-* **Romunarks** - [Your Full Name or LinkedIn Profile]
+## ⚙️ Installation & Development
+1. **Clone the repository:**
+   ```bash
+   git clone [https://github.com/romunarks/colca-domes.git](https://github.com/romunarks/colca-domes.git)
