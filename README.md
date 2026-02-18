@@ -28,13 +28,13 @@ To bridge the gap between sustainable architecture and modern software engineeri
 
 1.  **Clone the repository:**
     ```bash
-    git clone [https://github.com/romunarks/colca-domes.git](https://github.com/romunarks/colca-domes.git)
+    git clone [https://github.com/romunarks/colca-domes.git]
     ```
 2.  **Environment Variables:**
     Create a `.env` file and add your Supabase credentials:
     ```env
-    SUPABASE_URL=your_project_url
-    SUPABASE_KEY=your_anon_key
+    SUPABASE_URL=
+    SUPABASE_KEY=
     ```
 3.  **Install Dependencies:**
     ```bash
