@@ -1,30 +1,33 @@
 ---
+import { getLangFromPath, t } from "../i18n";
+const lang = getLangFromPath(Astro.url.pathname);
+const tr = t(lang);
 const whatsappNumber = (import.meta.env.PUBLIC_WHATSAPP_NUMBER ?? "").trim() || "51999999999";
 const defaultWhatsApp = `https://wa.me/${whatsappNumber}`;
 ---
 
 <section id="prebook" class="mx-auto w-full max-w-5xl scroll-mt-28 px-4 py-16 sm:px-6 md:py-24 lg:px-8">
   <div class="rounded-3xl border border-slate-800 bg-slate-900/60 p-6 sm:p-8">
-    <p class="text-xs font-medium uppercase tracking-[0.2em] text-gold sm:text-sm">Pre-reserva</p>
-    <h2 class="mt-3 text-2xl font-semibold text-sillar sm:text-3xl">Cotiza tu experiencia en minutos</h2>
+    <p class="text-xs font-medium uppercase tracking-[0.2em] text-gold sm:text-sm">{tr.prebook.eyebrow}</p>
+    <h2 class="mt-3 text-2xl font-semibold text-sillar sm:text-3xl">{tr.prebook.title}</h2>
     <p class="mt-3 max-w-2xl text-sm leading-relaxed text-slate-300 sm:text-base">
-      Primero consultamos disponibilidad real y luego generamos tu solicitud por WhatsApp con fechas y cantidad de huespedes.
+      {tr.prebook.body}
     </p>
 
     <form id="prebooking-form" class="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2">
       <label class="flex flex-col gap-2">
-        <span class="text-sm text-slate-200">Nombre</span>
+        <span class="text-sm text-slate-200">{tr.prebook.name}</span>
         <input
           id="guest-name"
           type="text"
           required
           class="rounded-xl border border-slate-700 bg-slate-950/70 px-4 py-3 text-sm text-sillar outline-none transition focus:border-gold"
-          placeholder="Tu nombre"
+          placeholder={tr.prebook.namePlaceholder}
         />
       </label>
 
       <div class="flex flex-col gap-2 md:col-span-2">
-        <span class="text-sm text-slate-200">Fechas</span>
+        <span class="text-sm text-slate-200">{tr.prebook.dates}</span>
 
         <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <input
@@ -49,13 +52,13 @@ const defaultWhatsApp = `https://wa.me/${whatsappNumber}`;
             type="button"
             class="inline-flex items-center justify-between rounded-xl border border-slate-700 bg-slate-950/70 px-4 py-3 text-sm text-sillar outline-none transition focus:border-gold"
           >
-            <span id="date-range-label" class="text-left text-slate-200">Selecciona check-in y check-out</span>
-            <span class="text-xs text-slate-400">Calendario</span>
+            <span id="date-range-label" class="text-left text-slate-200">{tr.prebook.selectRange}</span>
+            <span class="text-xs text-slate-400">{tr.prebook.calendar}</span>
           </button>
 
           <div class="rounded-xl border border-slate-800 bg-slate-950/50 px-4 py-3 text-xs text-slate-300">
-            <p class="font-medium text-slate-200">Tip</p>
-            <p class="mt-1">Verás la disponibilidad por día (tipo aerolínea).</p>
+            <p class="font-medium text-slate-200">{tr.prebook.tipTitle}</p>
+            <p class="mt-1">{tr.prebook.tipBody}</p>
           </div>
         </div>
 
@@ -64,7 +67,7 @@ const defaultWhatsApp = `https://wa.me/${whatsappNumber}`;
           class="mt-3 hidden rounded-2xl border border-slate-800 bg-slate-950/90 p-4"
         >
           <div class="mb-3 flex items-center justify-between gap-3">
-            <p class="text-xs uppercase tracking-[0.12em] text-slate-400">Elige un rango</p>
+            <p class="text-xs uppercase tracking-[0.12em] text-slate-400">{tr.prebook.chooseRange}</p>
             <div class="flex items-center gap-2">
               <button
                 id="cal-prev"
@@ -85,7 +88,7 @@ const defaultWhatsApp = `https://wa.me/${whatsappNumber}`;
                 type="button"
                 class="rounded-full border border-slate-700 px-3 py-1 text-xs text-slate-200 transition hover:bg-slate-800/60"
               >
-                Cerrar
+                {tr.prebook.close}
               </button>
             </div>
           </div>
@@ -93,31 +96,32 @@ const defaultWhatsApp = `https://wa.me/${whatsappNumber}`;
           <div id="calendar-grid" class="grid grid-cols-1 gap-4 md:grid-cols-2"></div>
 
           <p class="mt-3 text-xs text-slate-400">
-            Leyenda: <span class="text-emerald-300">verde</span> disponible, <span class="text-rose-300">rojo</span> sin cupo.
+            {tr.prebook.legend} <span class="text-emerald-300">green</span> {tr.prebook.available},{" "}
+            <span class="text-rose-300">red</span> {tr.prebook.soldOut}.
           </p>
         </div>
       </div>
 
       <label class="flex flex-col gap-2">
-        <span class="text-sm text-slate-200">Huespedes</span>
+        <span class="text-sm text-slate-200">{tr.prebook.guests}</span>
         <select
           id="guests"
           class="rounded-xl border border-slate-700 bg-slate-950/70 px-4 py-3 text-sm text-sillar outline-none transition focus:border-gold"
         >
-          <option value="1">1 huesped</option>
-          <option value="2" selected>2 huespedes</option>
-          <option value="3">3 huespedes</option>
-          <option value="4">4 huespedes</option>
+          <option value="1">{tr.prebook.guestLabel.replace("{n}", "1")}</option>
+          <option value="2" selected>{tr.prebook.guestLabel.replace("{n}", "2")}</option>
+          <option value="3">{tr.prebook.guestLabel.replace("{n}", "3")}</option>
+          <option value="4">{tr.prebook.guestLabel.replace("{n}", "4")}</option>
         </select>
       </label>
 
       <label class="flex flex-col gap-2 md:col-span-2">
-        <span class="text-sm text-slate-200">Mensaje adicional (opcional)</span>
+        <span class="text-sm text-slate-200">{tr.prebook.notes}</span>
         <textarea
           id="extra-message"
           rows="4"
           class="rounded-xl border border-slate-700 bg-slate-950/70 px-4 py-3 text-sm text-sillar outline-none transition focus:border-gold"
-          placeholder="Ejemplo: celebracion especial, preferencias, hora estimada de llegada."
+          placeholder={tr.prebook.notesPlaceholder}
         ></textarea>
       </label>
 
@@ -127,16 +131,16 @@ const defaultWhatsApp = `https://wa.me/${whatsappNumber}`;
           type="submit"
           class="inline-flex w-full items-center justify-center rounded-full bg-gold px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-amber-300 sm:w-auto"
         >
-          Consultar disponibilidad y enviar por WhatsApp
+          {tr.prebook.submit}
         </button>
       </div>
     </form>
 
     <noscript>
       <p class="mt-4 text-sm text-slate-300">
-        Activa JavaScript para generar el mensaje automatico o reserva directamente aqui:
+        {tr.prebook.noScript}
         <a href={defaultWhatsApp} target="_blank" rel="noopener noreferrer" class="text-gold underline">
-          WhatsApp reservas
+          {tr.prebook.whatsappBooking}
         </a>
       </p>
     </noscript>
@@ -145,6 +149,52 @@ const defaultWhatsApp = `https://wa.me/${whatsappNumber}`;
 
 <script>
   const whatsappNumber = (import.meta.env.PUBLIC_WHATSAPP_NUMBER ?? "").trim() || "51999999999";
+  const lang = window.location.pathname.startsWith("/en") ? "en" : "es";
+  const i18n = lang === "en"
+    ? {
+        weekdays: ["M", "T", "W", "T", "F", "S", "S"],
+        locale: "en-US",
+        selectRange: "Select check-in and check-out",
+        fill: "Please complete name, dates, and number of guests.",
+        checking: "Checking availability...",
+        validating: "Validating dates and availability...",
+        noValidate: "Could not validate availability.",
+        noStock: "No availability for those dates. Message us on WhatsApp for alternatives.",
+        available: (domes: number, total: number, nights: number) =>
+          `Available: ${domes} dome(s). Estimate: PEN ${total} for ${nights} night(s).`,
+        leadFail: "Availability found, but we couldn't save the pre-booking. Please try again.",
+        generic: "We couldn't process your request right now. Please try again in a few minutes.",
+        submit: "Check availability and send via WhatsApp",
+        waIntro: "Hi Colca Star Domes, I'd like to make a pre-booking.",
+        waName: "Name",
+        waGuests: "Guests",
+        waConfirmed: "Confirmed availability",
+        waEstimate: "Total estimate",
+        waCode: "Internal pre-booking code",
+        waExtra: "Additional message",
+      }
+    : {
+        weekdays: ["L", "M", "M", "J", "V", "S", "D"],
+        locale: "es-PE",
+        selectRange: "Selecciona check-in y check-out",
+        fill: "Completa nombre, fechas y cantidad de huéspedes.",
+        checking: "Consultando disponibilidad...",
+        validating: "Validando fechas y disponibilidad...",
+        noValidate: "No se pudo validar la disponibilidad.",
+        noStock: "No hay disponibilidad para esas fechas. Escríbenos por WhatsApp para sugerirte alternativas.",
+        available: (domes: number, total: number, nights: number) =>
+          `Disponible: ${domes} domo(s). Estimado: S/ ${total} por ${nights} noche(s).`,
+        leadFail: "Disponibilidad encontrada, pero no pudimos registrar la pre-reserva. Intenta otra vez.",
+        generic: "No pudimos procesar tu solicitud ahora. Intenta nuevamente en unos minutos.",
+        submit: "Consultar disponibilidad y enviar por WhatsApp",
+        waIntro: "Hola Colca Star Domes, quiero realizar una pre-reserva.",
+        waName: "Nombre",
+        waGuests: "Huéspedes",
+        waConfirmed: "Disponibilidad confirmada",
+        waEstimate: "Estimado total",
+        waCode: "Código interno de pre-reserva",
+        waExtra: "Mensaje adicional",
+      };
   const form = document.querySelector("#prebooking-form");
 
   const getElement = (selector: string) => document.querySelector(selector);
@@ -228,7 +278,7 @@ const defaultWhatsApp = `https://wa.me/${whatsappNumber}`;
     };
 
     const monthName = (d: Date) =>
-      d.toLocaleString("es-PE", { month: "long", year: "numeric", timeZone: "UTC" });
+      d.toLocaleString(i18n.locale, { month: "long", year: "numeric", timeZone: "UTC" });
 
     const renderMonth = (base: Date) => {
       const year = base.getUTCFullYear();
@@ -243,7 +293,7 @@ const defaultWhatsApp = `https://wa.me/${whatsappNumber}`;
       let html = `<div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-4">
   <p class="text-sm font-medium text-slate-200">${monthName(first)}</p>
   <div class="mt-3 grid grid-cols-7 gap-1 text-[11px] text-slate-400">
-    <span>L</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span><span>D</span>
+    <span>${i18n.weekdays[0]}</span><span>${i18n.weekdays[1]}</span><span>${i18n.weekdays[2]}</span><span>${i18n.weekdays[3]}</span><span>${i18n.weekdays[4]}</span><span>${i18n.weekdays[5]}</span><span>${i18n.weekdays[6]}</span>
   </div>
   <div class="mt-2 grid grid-cols-7 gap-1">`;
 
@@ -291,7 +341,7 @@ const defaultWhatsApp = `https://wa.me/${whatsappNumber}`;
       if (!(calendarLabel instanceof HTMLElement)) return;
       const checkin = (checkinInput as HTMLInputElement | null)?.value ?? "";
       const checkout = (checkoutInput as HTMLInputElement | null)?.value ?? "";
-      calendarLabel.textContent = checkin && checkout ? `${checkin} → ${checkout}` : "Selecciona check-in y check-out";
+      calendarLabel.textContent = checkin && checkout ? `${checkin} → ${checkout}` : i18n.selectRange;
     };
 
     if (calendarButton instanceof HTMLButtonElement && calendarPopover instanceof HTMLElement) {
@@ -376,16 +426,16 @@ const defaultWhatsApp = `https://wa.me/${whatsappNumber}`;
       const extra = (getElement("#extra-message") as HTMLTextAreaElement | null)?.value.trim();
 
       if (!name || !checkin || !checkout || !guests) {
-        setStatus("Completa nombre, fechas y cantidad de huespedes.", "error");
+        setStatus(i18n.fill, "error");
         return;
       }
 
       if (submitButton instanceof HTMLButtonElement) {
         submitButton.disabled = true;
-        submitButton.textContent = "Consultando disponibilidad...";
+        submitButton.textContent = i18n.checking;
       }
 
-      setStatus("Validando fechas y disponibilidad...", "info");
+      setStatus(i18n.validating, "info");
 
       try {
         const availabilityResponse = await fetch("/api/availability", {
@@ -401,22 +451,16 @@ const defaultWhatsApp = `https://wa.me/${whatsappNumber}`;
         const availabilityData = await availabilityResponse.json();
 
         if (!availabilityResponse.ok || !availabilityData.ok) {
-          setStatus(availabilityData.message ?? "No se pudo validar la disponibilidad.", "error");
+          setStatus(availabilityData.message ?? i18n.noValidate, "error");
           return;
         }
 
         if (!availabilityData.available) {
-          setStatus(
-            "No hay disponibilidad para esas fechas. Escribenos por WhatsApp para sugerirte alternativas.",
-            "error"
-          );
+          setStatus(i18n.noStock, "error");
           return;
         }
 
-        setStatus(
-          `Disponible: ${availabilityData.availableDomes} domo(s). Estimado: S/ ${availabilityData.totalEstimate} por ${availabilityData.nights} noche(s).`,
-          "success"
-        );
+        setStatus(i18n.available(availabilityData.availableDomes, availabilityData.totalEstimate, availabilityData.nights), "success");
 
         const leadResponse = await fetch("/api/prebook", {
           method: "POST",
@@ -438,34 +482,34 @@ const defaultWhatsApp = `https://wa.me/${whatsappNumber}`;
 
         const leadData = await leadResponse.json();
         if (!leadResponse.ok || !leadData.ok) {
-          setStatus("Disponibilidad encontrada, pero no pudimos registrar la pre-reserva. Intenta otra vez.", "error");
+          setStatus(i18n.leadFail, "error");
           return;
         }
 
         const messageLines = [
-          "Hola Colca Star Domes, quiero realizar una pre-reserva.",
-          `Nombre: ${name}`,
+          i18n.waIntro,
+          `${i18n.waName}: ${name}`,
           `Check-in: ${checkin}`,
           `Check-out: ${checkout}`,
-          `Huespedes: ${guests}`,
-          `Disponibilidad confirmada: ${availabilityData.availableDomes} domo(s)`,
-          `Estimado total: S/ ${availabilityData.totalEstimate}`,
-          `Codigo interno de pre-reserva: ${leadData.leadId}`,
+          `${i18n.waGuests}: ${guests}`,
+          `${i18n.waConfirmed}: ${availabilityData.availableDomes} domo(s)`,
+          `${i18n.waEstimate}: S/ ${availabilityData.totalEstimate}`,
+          `${i18n.waCode}: ${leadData.leadId}`,
         ];
 
         if (extra) {
-          messageLines.push(`Mensaje adicional: ${extra}`);
+          messageLines.push(`${i18n.waExtra}: ${extra}`);
         }
 
         const encodedMessage = encodeURIComponent(messageLines.join("\n"));
         const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
         window.open(whatsappUrl, "_blank", "noopener,noreferrer");
       } catch {
-        setStatus("No pudimos procesar tu solicitud ahora. Intenta nuevamente en unos minutos.", "error");
+        setStatus(i18n.generic, "error");
       } finally {
         if (submitButton instanceof HTMLButtonElement) {
           submitButton.disabled = false;
-          submitButton.textContent = "Consultar disponibilidad y enviar por WhatsApp";
+          submitButton.textContent = i18n.submit;
         }
       }
     });

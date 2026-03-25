@@ -1,33 +1,37 @@
 ---
+import { getLangFromPath, t } from "../i18n";
+const lang = getLangFromPath(Astro.url.pathname);
+const tr = t(lang);
+
 const images = [
   {
     src: "https://images.pexels.com/photos/1933316/pexels-photo-1933316.jpeg?auto=compress&cs=tinysrgb&w=1200",
-    alt: "Cielo nocturno estrellado en montana",
+    alt: tr.gallery.alts[0],
     tall: true,
   },
   {
     src: "https://images.pexels.com/photos/1309644/pexels-photo-1309644.jpeg?auto=compress&cs=tinysrgb&w=1200",
-    alt: "Domo de glamping con iluminacion tenue",
+    alt: tr.gallery.alts[1],
     tall: false,
   },
   {
     src: "https://images.pexels.com/photos/1624496/pexels-photo-1624496.jpeg?auto=compress&cs=tinysrgb&w=1200",
-    alt: "Vista panoramica del valle andino",
+    alt: tr.gallery.alts[2],
     tall: false,
   },
   {
     src: "https://images.pexels.com/photos/355465/pexels-photo-355465.jpeg?auto=compress&cs=tinysrgb&w=1200",
-    alt: "Paisaje natural al atardecer en altura",
+    alt: tr.gallery.alts[3],
     tall: true,
   },
   {
     src: "https://images.pexels.com/photos/208745/pexels-photo-208745.jpeg?auto=compress&cs=tinysrgb&w=1200",
-    alt: "Reflejos nocturnos y ambiente de lujo",
+    alt: tr.gallery.alts[4],
     tall: false,
   },
   {
     src: "https://images.pexels.com/photos/414144/pexels-photo-414144.jpeg?auto=compress&cs=tinysrgb&w=1200",
-    alt: "Via lactea visible en cielo despejado",
+    alt: tr.gallery.alts[5],
     tall: false,
   },
 ];
@@ -35,10 +39,10 @@ const images = [
 
 <section id="gallery" class="mx-auto w-full max-w-6xl scroll-mt-28 px-4 py-16 sm:px-6 md:py-24 lg:px-8">
   <div class="mb-10 text-center">
-    <p class="text-xs font-medium uppercase tracking-[0.2em] text-gold sm:text-sm">Galeria</p>
-    <h2 class="mt-3 text-2xl font-semibold text-sillar sm:text-3xl">Domos bajo millones de estrellas</h2>
+    <p class="text-xs font-medium uppercase tracking-[0.2em] text-gold sm:text-sm">{tr.gallery.eyebrow}</p>
+    <h2 class="mt-3 text-2xl font-semibold text-sillar sm:text-3xl">{tr.gallery.title}</h2>
     <p class="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-slate-300 sm:text-base">
-      Espacios geodesicos de lujo, paisajes andinos y noches ideales para astrofotografia.
+      {tr.gallery.body}
     </p>
   </div>
 

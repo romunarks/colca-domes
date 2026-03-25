@@ -1,5 +1,9 @@
 ---
 import { getSupabaseAdmin } from '../lib/server/supabase'; // Asegúrate de que esta ruta sea correcta
+import { getLangFromPath, t } from "../i18n";
+
+const lang = getLangFromPath(Astro.url.pathname);
+const tr = t(lang);
 
 type DomePack = {
   name: string;
@@ -10,20 +14,20 @@ type DomePack = {
 
 const fallbackDomes: DomePack[] = [
   {
-    name: "Domo Astral",
-    description: "Cúpula panorámica, fogata privada y desayuno.",
+    name: tr.packages.fallback[0].name,
+    description: tr.packages.fallback[0].description,
     capacity: 2,
     price_per_night: 520,
   },
   {
-    name: "Domo Familiar",
-    description: "Más espacio, ideal para grupos pequeños.",
+    name: tr.packages.fallback[1].name,
+    description: tr.packages.fallback[1].description,
     capacity: 4,
     price_per_night: 620,
   },
   {
-    name: "Domo Premium",
-    description: "Amenities premium y la mejor ubicación.",
+    name: tr.packages.fallback[2].name,
+    description: tr.packages.fallback[2].description,
     capacity: 2,
     price_per_night: 720,
   },
@@ -48,7 +52,7 @@ try {
   }
 } catch (error) {
   loadError =
-    error instanceof Error ? error.message : "No se pudieron cargar los paquetes desde la base de datos.";
+    error instanceof Error ? error.message : "Could not load packages from database.";
   console.warn("[Packages] Falling back to demo packages:", loadError);
 }
 
@@ -59,11 +63,11 @@ const whatsappBase = `https://wa.me/${whatsappNumber}?text=`;
 
 <section id="packages" class="mx-auto w-full max-w-6xl scroll-mt-28 px-4 py-16 sm:px-6 md:py-24 lg:px-8">
   <div class="mb-10 text-center">
-    <p class="text-xs font-medium uppercase tracking-[0.2em] text-gold sm:text-sm">Paquetes</p>
-    <h2 class="mt-3 text-2xl font-semibold text-sillar sm:text-3xl">Experiencias diseñadas para cada viaje</h2>
+    <p class="text-xs font-medium uppercase tracking-[0.2em] text-gold sm:text-sm">{tr.packages.eyebrow}</p>
+    <h2 class="mt-3 text-2xl font-semibold text-sillar sm:text-3xl">{tr.packages.title}</h2>
     {loadError && (
       <p class="mx-auto mt-3 max-w-2xl text-xs leading-relaxed text-slate-400">
-        Mostrando paquetes de demo (configura Supabase para ver los reales).
+        {tr.packages.demoNotice}
       </p>
     )}
   </div>
@@ -71,7 +75,7 @@ const whatsappBase = `https://wa.me/${whatsappNumber}?text=`;
   <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
     {domes.map((pack, index) => {
       const message = encodeURIComponent(
-        `Hola Colca Star Domes, deseo reservar el domo "${pack.name}". Por favor compartan disponibilidad.`
+        tr.packages.whatsappTemplate.replace("{name}", pack.name)
       );
       const link = `${whatsappBase}${message}`;
 
@@ -83,13 +87,13 @@ const whatsappBase = `https://wa.me/${whatsappNumber}?text=`;
             isHighlighted ? "border-gold bg-gradient-to-b from-gold/10 to-slate-900/80" : "border-slate-800 bg-slate-900/60"
           }`}
         >
-          <p class="text-xs uppercase tracking-[0.18em] text-gold">Domo</p>
+          <p class="text-xs uppercase tracking-[0.18em] text-gold">{tr.packages.domeLabel}</p>
           <h3 class="mt-3 text-xl font-semibold text-sillar">{pack.name}</h3>
-          <p class="mt-2 text-sm text-slate-300">Desde S/ {pack.price_per_night}</p>
+          <p class="mt-2 text-sm text-slate-300">{tr.packages.fromPrice} {pack.price_per_night}</p>
 
           <ul class="mt-4 space-y-2 text-sm text-slate-200">
             <li>• {pack.description}</li>
-            <li>• Capacidad: {pack.capacity} personas</li>
+            <li>• {tr.packages.capacity}: {pack.capacity} {tr.packages.people}</li>
           </ul>
 
           <a
@@ -98,7 +102,7 @@ const whatsappBase = `https://wa.me/${whatsappNumber}?text=`;
             rel="noopener noreferrer"
             class="mt-6 inline-flex items-center justify-center rounded-full border border-gold px-4 py-2 text-sm font-medium text-gold transition hover:bg-gold/10"
           >
-            Consultar paquete
+            {tr.packages.cta}
           </a>
         </article>
       );
