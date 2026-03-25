@@ -29,6 +29,14 @@ export const getSupabaseAdmin = (): SupabaseClient => {
   return supabaseAdminClient;
 };
 
+export const tryGetSupabaseAdmin = (): SupabaseClient | null => {
+  try {
+    return getSupabaseAdmin();
+  } catch {
+    return null;
+  }
+};
+
 export const getConfigNumber = (key: "TOTAL_DOMES" | "BASE_RATE_PEN", fallback: number): number => {
   const raw = import.meta.env[key];
   if (!raw) {

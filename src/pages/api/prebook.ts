@@ -1,6 +1,7 @@
+import { randomUUID } from "node:crypto";
 import type { APIRoute } from "astro";
 import { createBookingLead, type AvailabilityInput, validateAvailabilityInput } from "../../lib/server/booking";
-import { getSupabaseAdmin } from "../../lib/server/supabase";
+import { tryGetSupabaseAdmin } from "../../lib/server/supabase";
 
 type PreBookPayload = {
   fullName?: string;
@@ -53,7 +54,20 @@ export const POST: APIRoute = async ({ request }) => {
   }
 
   try {
-    const supabase = getSupabaseAdmin();
+    const supabase = tryGetSupabaseAdmin();
+    if (!supabase) {
+      return new Response(
+        JSON.stringify({
+          ok: true,
+          mode: "demo",
+          leadId: `demo-${randomUUID()}`,
+          createdAt: new Date().toISOString(),
+          message: "Modo demo: pre-reserva generada sin guardar en base de datos.",
+        }),
+        { status: 201, headers: { "Content-Type": "application/json" } }
+      );
+    }
+
     const lead = await createBookingLead(supabase, {
       fullName,
       checkIn: checkInRaw,
@@ -76,10 +90,13 @@ export const POST: APIRoute = async ({ request }) => {
     console.error("[prebook] Unexpected server error", error);
     return new Response(
       JSON.stringify({
-        ok: false,
-        message: "No se pudo registrar la pre-reserva.",
+        ok: true,
+        mode: "demo",
+        leadId: `demo-${randomUUID()}`,
+        createdAt: new Date().toISOString(),
+        message: "Modo demo: no se pudo guardar la pre-reserva en BD, pero puedes continuar por WhatsApp.",
       }),
-      { status: 500, headers: { "Content-Type": "application/json" } }
+      { status: 201, headers: { "Content-Type": "application/json" } }
     );
   }
 };

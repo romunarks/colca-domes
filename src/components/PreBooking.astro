@@ -23,25 +23,80 @@ const defaultWhatsApp = `https://wa.me/${whatsappNumber}`;
         />
       </label>
 
-      <label class="flex flex-col gap-2">
-        <span class="text-sm text-slate-200">Check-in</span>
-        <input
-          id="checkin-date"
-          type="date"
-          required
-          class="rounded-xl border border-slate-700 bg-slate-950/70 px-4 py-3 text-sm text-sillar outline-none transition focus:border-gold"
-        />
-      </label>
+      <div class="flex flex-col gap-2 md:col-span-2">
+        <span class="text-sm text-slate-200">Fechas</span>
 
-      <label class="flex flex-col gap-2">
-        <span class="text-sm text-slate-200">Check-out</span>
-        <input
-          id="checkout-date"
-          type="date"
-          required
-          class="rounded-xl border border-slate-700 bg-slate-950/70 px-4 py-3 text-sm text-sillar outline-none transition focus:border-gold"
-        />
-      </label>
+        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <input
+            id="checkin-date"
+            type="date"
+            required
+            class="hidden"
+            aria-hidden="true"
+            tabindex="-1"
+          />
+          <input
+            id="checkout-date"
+            type="date"
+            required
+            class="hidden"
+            aria-hidden="true"
+            tabindex="-1"
+          />
+
+          <button
+            id="date-range-button"
+            type="button"
+            class="inline-flex items-center justify-between rounded-xl border border-slate-700 bg-slate-950/70 px-4 py-3 text-sm text-sillar outline-none transition focus:border-gold"
+          >
+            <span id="date-range-label" class="text-left text-slate-200">Selecciona check-in y check-out</span>
+            <span class="text-xs text-slate-400">Calendario</span>
+          </button>
+
+          <div class="rounded-xl border border-slate-800 bg-slate-950/50 px-4 py-3 text-xs text-slate-300">
+            <p class="font-medium text-slate-200">Tip</p>
+            <p class="mt-1">Verás la disponibilidad por día (tipo aerolínea).</p>
+          </div>
+        </div>
+
+        <div
+          id="calendar-popover"
+          class="mt-3 hidden rounded-2xl border border-slate-800 bg-slate-950/90 p-4"
+        >
+          <div class="mb-3 flex items-center justify-between gap-3">
+            <p class="text-xs uppercase tracking-[0.12em] text-slate-400">Elige un rango</p>
+            <div class="flex items-center gap-2">
+              <button
+                id="cal-prev"
+                type="button"
+                class="rounded-full border border-slate-700 px-3 py-1 text-xs text-slate-200 transition hover:bg-slate-800/60"
+              >
+                ‹
+              </button>
+              <button
+                id="cal-next"
+                type="button"
+                class="rounded-full border border-slate-700 px-3 py-1 text-xs text-slate-200 transition hover:bg-slate-800/60"
+              >
+                ›
+              </button>
+              <button
+                id="cal-close"
+                type="button"
+                class="rounded-full border border-slate-700 px-3 py-1 text-xs text-slate-200 transition hover:bg-slate-800/60"
+              >
+                Cerrar
+              </button>
+            </div>
+          </div>
+
+          <div id="calendar-grid" class="grid grid-cols-1 gap-4 md:grid-cols-2"></div>
+
+          <p class="mt-3 text-xs text-slate-400">
+            Leyenda: <span class="text-emerald-300">verde</span> disponible, <span class="text-rose-300">rojo</span> sin cupo.
+          </p>
+        </div>
+      </div>
 
       <label class="flex flex-col gap-2">
         <span class="text-sm text-slate-200">Huespedes</span>
@@ -125,6 +180,192 @@ const defaultWhatsApp = `https://wa.me/${whatsappNumber}`;
   };
 
   if (form instanceof HTMLFormElement) {
+    const calendarButton = document.querySelector("#date-range-button");
+    const calendarLabel = document.querySelector("#date-range-label");
+    const calendarPopover = document.querySelector("#calendar-popover");
+    const calendarGrid = document.querySelector("#calendar-grid");
+    const calPrev = document.querySelector("#cal-prev");
+    const calNext = document.querySelector("#cal-next");
+    const calClose = document.querySelector("#cal-close");
+
+    const checkinInput = document.querySelector("#checkin-date");
+    const checkoutInput = document.querySelector("#checkout-date");
+
+    const toIso = (d: Date) => d.toISOString().slice(0, 10);
+    const fromIso = (raw: string) => new Date(`${raw}T00:00:00Z`);
+    const isSameOrAfter = (a: string, b: string) => a >= b;
+    const addDays = (raw: string, days: number) => {
+      const d = fromIso(raw);
+      d.setUTCDate(d.getUTCDate() + days);
+      return toIso(d);
+    };
+
+    let view = new Date();
+    view.setUTCDate(1);
+    let availabilityCache = new Map<string, number>(); // date -> availableDomes
+
+    const fetchMonth = async (year: number, month: number) => {
+      const response = await fetch(`/api/calendar?year=${year}&month=${month}`);
+      const data = await response.json().catch(() => null);
+      if (!response.ok || !data?.ok) {
+        return [];
+      }
+      return data.days as Array<{ date: string; availableDomes: number }>;
+    };
+
+    const ensureAvailability = async (base: Date) => {
+      availabilityCache.clear();
+      const year1 = base.getUTCFullYear();
+      const month1 = base.getUTCMonth() + 1;
+      const next = new Date(Date.UTC(year1, base.getUTCMonth() + 1, 1));
+      const year2 = next.getUTCFullYear();
+      const month2 = next.getUTCMonth() + 1;
+
+      const [days1, days2] = await Promise.all([fetchMonth(year1, month1), fetchMonth(year2, month2)]);
+      for (const d of [...days1, ...days2]) {
+        availabilityCache.set(d.date, d.availableDomes);
+      }
+    };
+
+    const monthName = (d: Date) =>
+      d.toLocaleString("es-PE", { month: "long", year: "numeric", timeZone: "UTC" });
+
+    const renderMonth = (base: Date) => {
+      const year = base.getUTCFullYear();
+      const month = base.getUTCMonth();
+      const first = new Date(Date.UTC(year, month, 1));
+      const startDay = (first.getUTCDay() + 6) % 7; // Monday=0
+      const daysInMonth = new Date(Date.UTC(year, month + 1, 0)).getUTCDate();
+
+      const checkin = (checkinInput as HTMLInputElement | null)?.value ?? "";
+      const checkout = (checkoutInput as HTMLInputElement | null)?.value ?? "";
+
+      let html = `<div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-4">
+  <p class="text-sm font-medium text-slate-200">${monthName(first)}</p>
+  <div class="mt-3 grid grid-cols-7 gap-1 text-[11px] text-slate-400">
+    <span>L</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span><span>D</span>
+  </div>
+  <div class="mt-2 grid grid-cols-7 gap-1">`;
+
+      for (let i = 0; i < startDay; i++) {
+        html += `<span class="h-10"></span>`;
+      }
+
+      for (let day = 1; day <= daysInMonth; day++) {
+        const date = new Date(Date.UTC(year, month, day));
+        const iso = toIso(date);
+        const available = availabilityCache.get(iso);
+        const isSoldOut = typeof available === "number" && available <= 0;
+        const isSelected =
+          (checkin && iso === checkin) ||
+          (checkout && iso === checkout) ||
+          (checkin && checkout && iso > checkin && iso < checkout);
+
+        const baseClass =
+          "h-10 w-full rounded-xl border text-xs transition focus:outline-none focus:ring-2 focus:ring-gold/60";
+        const stateClass = isSoldOut
+          ? "border-rose-500/40 bg-rose-500/10 text-rose-100 opacity-60 cursor-not-allowed"
+          : "border-slate-700 bg-slate-950/50 text-slate-100 hover:bg-slate-900/70";
+        const selectedClass = isSelected ? " ring-2 ring-gold/60 border-gold" : "";
+
+        html += `<button type="button" class="${baseClass} ${stateClass}${selectedClass}" data-cal-day="${iso}" ${
+          isSoldOut ? "disabled" : ""
+        }>
+  <span class="block leading-4">${day}</span>
+  <span class="block text-[10px] text-slate-300">${typeof available === "number" ? available : "-"}</span>
+</button>`;
+      }
+
+      html += `</div></div></div>`;
+      return html;
+    };
+
+    const renderCalendar = async () => {
+      if (!(calendarGrid instanceof HTMLElement)) return;
+      await ensureAvailability(view);
+      const next = new Date(Date.UTC(view.getUTCFullYear(), view.getUTCMonth() + 1, 1));
+      calendarGrid.innerHTML = renderMonth(view) + renderMonth(next);
+    };
+
+    const updateLabel = () => {
+      if (!(calendarLabel instanceof HTMLElement)) return;
+      const checkin = (checkinInput as HTMLInputElement | null)?.value ?? "";
+      const checkout = (checkoutInput as HTMLInputElement | null)?.value ?? "";
+      calendarLabel.textContent = checkin && checkout ? `${checkin} → ${checkout}` : "Selecciona check-in y check-out";
+    };
+
+    if (calendarButton instanceof HTMLButtonElement && calendarPopover instanceof HTMLElement) {
+      calendarButton.addEventListener("click", async () => {
+        const isHidden = calendarPopover.classList.contains("hidden");
+        calendarPopover.classList.toggle("hidden", !isHidden);
+        if (isHidden) {
+          await renderCalendar();
+        }
+      });
+    }
+
+    if (calClose instanceof HTMLButtonElement && calendarPopover instanceof HTMLElement) {
+      calClose.addEventListener("click", () => calendarPopover.classList.add("hidden"));
+    }
+
+    if (calPrev instanceof HTMLButtonElement) {
+      calPrev.addEventListener("click", async () => {
+        view = new Date(Date.UTC(view.getUTCFullYear(), view.getUTCMonth() - 1, 1));
+        await renderCalendar();
+      });
+    }
+
+    if (calNext instanceof HTMLButtonElement) {
+      calNext.addEventListener("click", async () => {
+        view = new Date(Date.UTC(view.getUTCFullYear(), view.getUTCMonth() + 1, 1));
+        await renderCalendar();
+      });
+    }
+
+    document.addEventListener("click", async (event) => {
+      const target = event.target;
+      if (!(target instanceof HTMLElement)) return;
+      const dayButton = target.closest("[data-cal-day]");
+      if (!(dayButton instanceof HTMLButtonElement)) return;
+
+      const date = dayButton.getAttribute("data-cal-day") ?? "";
+      if (!date) return;
+
+      const checkinEl = checkinInput as HTMLInputElement | null;
+      const checkoutEl = checkoutInput as HTMLInputElement | null;
+      if (!checkinEl || !checkoutEl) return;
+
+      const currentIn = checkinEl.value;
+      const currentOut = checkoutEl.value;
+
+      // Start new range if empty or completed
+      if (!currentIn || (currentIn && currentOut)) {
+        checkinEl.value = date;
+        checkoutEl.value = "";
+        updateLabel();
+        await renderCalendar();
+        return;
+      }
+
+      // Set checkout (must be after checkin)
+      if (currentIn && !currentOut) {
+        if (!isSameOrAfter(date, addDays(currentIn, 1))) {
+          // If user clicks same/previous date, restart range
+          checkinEl.value = date;
+          checkoutEl.value = "";
+          updateLabel();
+          await renderCalendar();
+          return;
+        }
+
+        checkoutEl.value = date;
+        updateLabel();
+        await renderCalendar();
+      }
+    });
+
+    updateLabel();
+
     form.addEventListener("submit", async (event) => {
       event.preventDefault();
       const submitButton = form.querySelector('button[type="submit"]');
