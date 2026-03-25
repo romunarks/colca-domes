@@ -1,55 +1,61 @@
 ---
-const packages = [
-  {
-    name: "Escape Romantico",
-    price: "Desde S/ 890",
-    includes: ["1 noche en domo premium", "Jacuzzi privado", "Cena de autor para 2"],
-    highlighted: false,
-  },
-  {
-    name: "Astro Experience",
-    price: "Desde S/ 1,120",
-    includes: ["1 noche en domo premium", "Sesion guiada de cielo nocturno", "Kit basico de astrofotografia"],
-    highlighted: true,
-  },
-  {
-    name: "Aventura Colca",
-    price: "Desde S/ 1,350",
-    includes: ["2 noches en domo premium", "Tour panoramico del valle", "Desayuno andino incluido"],
-    highlighted: false,
-  },
-];
+import { getSupabaseAdmin } from '../lib/server/supabase'; // Asegúrate de que esta ruta sea correcta
 
-const whatsappBase = "https://wa.me/51999999999?text=";
+// 1. Instanciamos el cliente
+const supabase = getSupabaseAdmin();
+
+// 2. Consultamos la tabla 'domes' (asegúrate de que los campos coincidan con los de tu tabla)
+const { data: domes, error } = await supabase.from('domes').select('*');
+
+if (error) {
+  console.error("Error cargando los paquetes de domos:", error.message);
+}
+
+// Mantenemos tu base de WhatsApp
+const whatsappNumber = (import.meta.env.PUBLIC_WHATSAPP_NUMBER ?? "").trim() || "51999999999";
+const whatsappBase = `https://wa.me/${whatsappNumber}?text=`;
 ---
 
 <section id="packages" class="mx-auto w-full max-w-6xl scroll-mt-28 px-4 py-16 sm:px-6 md:py-24 lg:px-8">
   <div class="mb-10 text-center">
     <p class="text-xs font-medium uppercase tracking-[0.2em] text-gold sm:text-sm">Paquetes</p>
-    <h2 class="mt-3 text-2xl font-semibold text-sillar sm:text-3xl">Experiencias disenadas para cada viaje</h2>
+    <h2 class="mt-3 text-2xl font-semibold text-sillar sm:text-3xl">Experiencias diseñadas para cada viaje</h2>
   </div>
 
   <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
-    {
-      packages.map((pack) => {
+    {/* 3. Mapeamos los datos que vienen de 'domes' en lugar del arreglo estático */}
+    {domes && domes.length > 0 ? (
+      domes.map((pack, index) => {
+        // Generamos el mensaje de WhatsApp dinámicamente con el nombre que viene de la BD
         const message = encodeURIComponent(
-          `Hola Colca Star Domes, deseo reservar el paquete "${pack.name}". Por favor compartan disponibilidad.`
+          `Hola Colca Star Domes, deseo reservar el domo "${pack.name}". Por favor compartan disponibilidad.`
         );
         const link = `${whatsappBase}${message}`;
+        
+        // Vamos a resaltar el paquete de en medio (index 1) o puedes agregar 
+        // una columna booleana 'highlighted' en tu tabla de Supabase en el futuro.
+        const isHighlighted = index === 1;
+
         return (
           <article
             class={`rounded-2xl border p-6 ${
-              pack.highlighted
+              isHighlighted
                 ? "border-gold bg-gradient-to-b from-gold/10 to-slate-900/80"
                 : "border-slate-800 bg-slate-900/60"
             }`}
           >
-            <p class="text-xs uppercase tracking-[0.18em] text-gold">Paquete</p>
+            <p class="text-xs uppercase tracking-[0.18em] text-gold">Domo</p>
             <h3 class="mt-3 text-xl font-semibold text-sillar">{pack.name}</h3>
-            <p class="mt-2 text-sm text-slate-300">{pack.price}</p>
+            {/* Formateamos el precio que viene de la base de datos */}
+            <p class="mt-2 text-sm text-slate-300">Desde S/ {pack.price_per_night}</p>
 
             <ul class="mt-4 space-y-2 text-sm text-slate-200">
-              {pack.includes.map((item) => <li>• {item}</li>)}
+              {/* Aquí usamos description y capacity que creaste en tu BD */}
+              <li>• {pack.description}</li>
+              <li>• Capacidad: {pack.capacity} personas</li>
+              {/* Si quieres que 'includes' vuelva a ser una lista, tendríamos que 
+                  crear una columna de tipo array (text[]) en Supabase. 
+                  Por ahora usamos la descripción general. */}
             </ul>
 
             <a
@@ -63,7 +69,10 @@ const whatsappBase = "https://wa.me/51999999999?text=";
           </article>
         );
       })
-    }
+    ) : (
+      <div class="col-span-full text-center py-12">
+        <p class="text-xl text-slate-400">Cargando paquetes disponibles...</p>
+      </div>
+    )}
   </div>
 </section>
-

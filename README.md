@@ -33,17 +33,40 @@ To bridge the gap between sustainable architecture and modern software engineeri
 2.  **Environment Variables:**
     Create a `.env` file and add your Supabase credentials:
     ```env
+    # Server-only (required)
     SUPABASE_URL=
-    SUPABASE_KEY=
+    SUPABASE_SERVICE_ROLE_KEY=
+
+    # Optional pricing/availability knobs (server-side)
+    TOTAL_DOMES=6
+    BASE_RATE_PEN=420
+
+    # Admin dashboard (HTTP Basic Auth)
+    ADMIN_BASIC_USER=admin
+    ADMIN_BASIC_PASS=change-me
+
+    # Public config (safe to expose to browser)
+    PUBLIC_WHATSAPP_NUMBER=51999999999
     ```
 3.  **Install Dependencies:**
     ```bash
     npm install
     ```
-4.  **Build & Transpile:**
+4.  **Run locally:**
     ```bash
-    tsc
+    npm run dev
     ```
+5.  **Build:**
+    ```bash
+    npm run build
+    ```
+
+## 🔌 API Routes
+- **POST** `/api/availability`: validates date range and returns availability + estimate.
+- **POST** `/api/prebook`: stores a booking lead in `booking_leads`.
+
+## 🔐 Admin Dashboard
+Open `/admin/leads` and authenticate with HTTP Basic Auth using `ADMIN_BASIC_USER` / `ADMIN_BASIC_PASS`.
 
 ## 👤 Author
 **Rodrigo Prieto Munar**

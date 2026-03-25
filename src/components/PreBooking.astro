@@ -1,5 +1,6 @@
 ---
-const defaultWhatsApp = "https://wa.me/51999999999";
+const whatsappNumber = (import.meta.env.PUBLIC_WHATSAPP_NUMBER ?? "").trim() || "51999999999";
+const defaultWhatsApp = `https://wa.me/${whatsappNumber}`;
 ---
 
 <section id="prebook" class="mx-auto w-full max-w-5xl scroll-mt-28 px-4 py-16 sm:px-6 md:py-24 lg:px-8">
@@ -88,6 +89,7 @@ const defaultWhatsApp = "https://wa.me/51999999999";
 </section>
 
 <script>
+  const whatsappNumber = (import.meta.env.PUBLIC_WHATSAPP_NUMBER ?? "").trim() || "51999999999";
   const form = document.querySelector("#prebooking-form");
 
   const getElement = (selector: string) => document.querySelector(selector);
@@ -215,7 +217,7 @@ const defaultWhatsApp = "https://wa.me/51999999999";
         }
 
         const encodedMessage = encodeURIComponent(messageLines.join("\n"));
-        const whatsappUrl = `https://wa.me/51999999999?text=${encodedMessage}`;
+        const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
         window.open(whatsappUrl, "_blank", "noopener,noreferrer");
       } catch {
         setStatus("No pudimos procesar tu solicitud ahora. Intenta nuevamente en unos minutos.", "error");

@@ -6,6 +6,10 @@ create extension if not exists "pgcrypto";
 create table if not exists public.domes (
   id uuid primary key default gen_random_uuid(),
   code text not null unique,
+  name text not null,
+  description text not null default '',
+  capacity int not null default 2 check (capacity > 0 and capacity <= 12),
+  price_per_night int not null default 420 check (price_per_night > 0),
   active boolean not null default true,
   created_at timestamptz not null default now()
 );
@@ -38,15 +42,27 @@ create index if not exists idx_reservations_date_range on public.reservations (c
 create index if not exists idx_reservations_status on public.reservations (status);
 create index if not exists idx_booking_leads_created_at on public.booking_leads (created_at desc);
 
+-- Basic hardening: block accidental public access.
+-- Note: service role bypasses RLS and will keep working for server-side endpoints.
+alter table public.domes enable row level security;
+alter table public.reservations enable row level security;
+alter table public.booking_leads enable row level security;
+
+create policy "read domes (public)" on public.domes
+for select
+using (active = true);
+
+-- No public insert/select on leads/reservations by default.
+
 -- Seed domes (adjust quantity as needed)
-insert into public.domes (code, active)
+insert into public.domes (code, name, description, capacity, price_per_night, active)
 values
-  ('DOME-01', true),
-  ('DOME-02', true),
-  ('DOME-03', true),
-  ('DOME-04', true),
-  ('DOME-05', true),
-  ('DOME-06', true)
+  ('DOME-01', 'Domo Andino', 'Vista al cañón, cama queen, calefacción.', 2, 420, true),
+  ('DOME-02', 'Domo Astral', 'Cúpula panorámica, fogata privada, desayuno.', 2, 520, true),
+  ('DOME-03', 'Domo Familiar', 'Más espacio, ideal para grupos pequeños.', 4, 620, true),
+  ('DOME-04', 'Domo Premium', 'Amenities premium, mejor ubicación.', 2, 720, true),
+  ('DOME-05', 'Domo Eco', 'Minimalista y sostenible, gran relación calidad-precio.', 2, 380, true),
+  ('DOME-06', 'Domo Suite', 'Experiencia tope de gama con extras incluidos.', 2, 850, true)
 on conflict (code) do nothing;
 
 -- Optional sample reservations for testing

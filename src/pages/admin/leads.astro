@@ -3,20 +3,44 @@ import Layout from "../../layouts/Layout.astro";
 import { getSupabaseAdmin } from "../../lib/server/supabase";
 import { listRecentBookingLeads, type BookingLeadRow } from "../../lib/server/booking";
 
-const requiredKey = import.meta.env.ADMIN_DASHBOARD_KEY?.trim() ?? "";
-const providedKey = Astro.url.searchParams.get("key")?.trim() ?? "";
-const hasAccess = !requiredKey || providedKey === requiredKey;
+const basicUser = import.meta.env.ADMIN_BASIC_USER?.trim() ?? "";
+const basicPass = import.meta.env.ADMIN_BASIC_PASS?.trim() ?? "";
+
+const parseBasicAuth = (header: string) => {
+  const [scheme, encoded] = header.split(" ");
+  if (scheme !== "Basic" || !encoded) return null;
+
+  try {
+    const decoded = Buffer.from(encoded, "base64").toString("utf-8");
+    const idx = decoded.indexOf(":");
+    if (idx < 0) return null;
+    return { user: decoded.slice(0, idx), pass: decoded.slice(idx + 1) };
+  } catch {
+    return null;
+  }
+};
+
+const authHeader = Astro.request.headers.get("authorization") ?? "";
+const creds = parseBasicAuth(authHeader);
+const hasAccess = !basicUser || !basicPass || (!!creds && creds.user === basicUser && creds.pass === basicPass);
+
+if (!hasAccess) {
+  return new Response("Authentication required", {
+    status: 401,
+    headers: {
+      "WWW-Authenticate": 'Basic realm="Colca Domes Admin", charset="UTF-8"',
+    },
+  });
+}
 
 let leads: BookingLeadRow[] = [];
 let loadError = "";
 
-if (hasAccess) {
-  try {
-    const supabase = getSupabaseAdmin();
-    leads = await listRecentBookingLeads(supabase, 100);
-  } catch (error) {
-    loadError = error instanceof Error ? error.message : "No se pudo cargar la lista de leads.";
-  }
+try {
+  const supabase = getSupabaseAdmin();
+  leads = await listRecentBookingLeads(supabase, 100);
+} catch (error) {
+  loadError = error instanceof Error ? error.message : "No se pudo cargar la lista de leads.";
 }
 
 const totals = {
@@ -50,17 +74,6 @@ const formatDateTime = (value: string) =>
         Volver a la landing
       </a>
     </div>
-
-    {
-      !hasAccess && (
-        <div class="rounded-2xl border border-rose-500/40 bg-rose-500/10 p-5 text-rose-100">
-          <p class="text-sm font-medium">Acceso restringido</p>
-          <p class="mt-2 text-sm">
-            Configura `ADMIN_DASHBOARD_KEY` en `.env` y abre esta URL con `?key=tu_clave`.
-          </p>
-        </div>
-      )
-    }
 
     {
       hasAccess && loadError && (
