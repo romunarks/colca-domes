@@ -37,6 +37,7 @@ export type ValidationError = {
 export const isIsoDate = (value: string) => /^\d{4}-\d{2}-\d{2}$/.test(value);
 
 export const toUtcDate = (dateRaw: string) => new Date(`${dateRaw}T00:00:00Z`);
+export const getTodayUtcStart = () => toUtcDate(new Date().toISOString().slice(0, 10));
 
 export const getNights = (checkIn: Date, checkOut: Date) => {
   const msPerNight = 1000 * 60 * 60 * 24;
@@ -58,8 +59,7 @@ export const validateAvailabilityInput = (input: AvailabilityInput): ValidationE
   const checkOut = toUtcDate(checkOutRaw);
   const nights = getNights(checkIn, checkOut);
 
-  const today = new Date();
-  const todayUtc = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()));
+  const todayUtc = getTodayUtcStart();
 
   if (checkIn < todayUtc) {
     return {

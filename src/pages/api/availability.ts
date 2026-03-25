@@ -67,13 +67,12 @@ export const POST: APIRoute = async ({ request }) => {
       { status: 200, headers: { "Content-Type": "application/json" } }
     );
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Internal server error";
+    console.error("[availability] Unexpected server error", error);
     return new Response(
       JSON.stringify({
         ok: false,
         message:
           "No se pudo consultar disponibilidad. Verifica SUPABASE_URL y SUPABASE_SERVICE_ROLE_KEY en el servidor.",
-        details: message,
       }),
       { status: 500, headers: { "Content-Type": "application/json" } }
     );

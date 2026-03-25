@@ -73,12 +73,11 @@ export const POST: APIRoute = async ({ request }) => {
       { status: 201, headers: { "Content-Type": "application/json" } }
     );
   } catch (error) {
-    const details = error instanceof Error ? error.message : "Internal server error";
+    console.error("[prebook] Unexpected server error", error);
     return new Response(
       JSON.stringify({
         ok: false,
         message: "No se pudo registrar la pre-reserva.",
-        details,
       }),
       { status: 500, headers: { "Content-Type": "application/json" } }
     );
