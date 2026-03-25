@@ -1,43 +1,51 @@
-# Astro Starter Kit: Minimal
+# Colca Domes: Full-Stack Sustainable Housing Platform 🏔️
 
-```sh
-npm create astro@latest -- --template minimal
-```
+This project is a high-performance web application developed for **OPIT - Open Institute of Technology**. It serves as a digital ecosystem for exploring and managing sustainable dome-shaped accommodations in the Colca Canyon, Peru.
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## 🎯 Project Vision
+To bridge the gap between sustainable architecture and modern software engineering by providing a type-safe, database-driven platform that handles real-time data and user interactions.
 
-## 🚀 Project Structure
+## 🛠️ Technical Architecture & Stack
 
-Inside of your Astro project, you'll see the following folders and files:
+### **Frontend & Logic**
+* **TypeScript (TS):** Implementing strict typing across the application to ensure memory safety, reduce runtime bugs, and improve developer experience.
+* **HTML5 & CSS3:** Utilizing advanced layouts (Flexbox/Grid) with a **Mobile-First** approach through optimized Media Queries.
+* **DOM Manipulation:** Efficient event handling for a dynamic User Experience.
 
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
+### **Backend-as-a-Service (BaaS)**
+* **Supabase:** The core engine for the backend infrastructure.
+    * **PostgreSQL Database:** Storing complex data structures for dome features, locations, and user data.
+    * **Supabase Auth:** (If implemented) Secure user authentication and session management.
+    * **Real-time Subscriptions:** Leveraging Supabase's capabilities for instant data updates.
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+## 🚀 Key Engineering Features
+* **Database Integration:** Seamless connection between the TypeScript frontend and the Supabase PostgreSQL backend.
+* **Type-Safe Schemas:** Custom interfaces that mirror the database structure for end-to-end type safety.
+* **Responsive Design:** Fully adaptive UI designed to perform in low-bandwidth environments (crucial for remote locations like Colca).
+* **Scalable Structure:** Modular code organization following clean code principles.
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+## ⚙️ Development Setup
 
-Any static assets, like images, can be placed in the `public/` directory.
+1.  **Clone the repository:**
+    ```bash
+    git clone [https://github.com/romunarks/colca-domes.git]
+    ```
+2.  **Environment Variables:**
+    Create a `.env` file and add your Supabase credentials:
+    ```env
+    SUPABASE_URL=
+    SUPABASE_KEY=
+    ```
+3.  **Install Dependencies:**
+    ```bash
+    npm install
+    ```
+4.  **Build & Transpile:**
+    ```bash
+    tsc
+    ```
 
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+## 👤 Author
+**Rodrigo Prieto Munar**
+*Student at OPIT - Open Institute of Technology*
+GitHub: [@romunarks](https://github.com/romunarks)
