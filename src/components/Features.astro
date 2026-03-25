@@ -1,7 +1,13 @@
+---
+import { getLangFromPath, t } from "../i18n";
+const lang = getLangFromPath(Astro.url.pathname);
+const tr = t(lang);
+---
+
 <section id="features" class="mx-auto w-full max-w-5xl scroll-mt-28 px-4 py-16 sm:px-6 md:py-24 lg:px-8">
   <div class="mb-10 text-center">
-    <p class="text-xs font-medium uppercase tracking-[0.2em] text-gold sm:text-sm">Comodidad premium</p>
-    <h2 class="mt-3 text-2xl font-semibold text-sillar sm:text-3xl">Detalles pensados para el cielo</h2>
+    <p class="text-xs font-medium uppercase tracking-[0.2em] text-gold sm:text-sm">{tr.features.eyebrow}</p>
+    <h2 class="mt-3 text-2xl font-semibold text-sillar sm:text-3xl">{tr.features.title}</h2>
   </div>
 
   <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -13,9 +19,9 @@
           <path d="M8 19h8" />
         </svg>
       </div>
-      <h3 class="mt-4 text-xl font-medium text-sillar">Calefaccion</h3>
+      <h3 class="mt-4 text-xl font-medium text-sillar">{tr.features.items[0].title}</h3>
       <p class="mt-2 text-sm leading-relaxed text-slate-300">
-        Temperatura ideal durante toda la noche para una estadia confortable en altura.
+        {tr.features.items[0].body}
       </p>
     </article>
 
@@ -28,9 +34,9 @@
           <path d="M7 19c.8.9 2 1.5 3.2 1.5h3.6c1.2 0 2.4-.6 3.2-1.5" />
         </svg>
       </div>
-      <h3 class="mt-4 text-xl font-medium text-sillar">Jacuzzi Privado</h3>
+      <h3 class="mt-4 text-xl font-medium text-sillar">{tr.features.items[1].title}</h3>
       <p class="mt-2 text-sm leading-relaxed text-slate-300">
-        Relajate en un espacio intimo con agua caliente y una vista abierta al cielo nocturno.
+        {tr.features.items[1].body}
       </p>
     </article>
 
@@ -42,9 +48,9 @@
           <path d="M3 6h18" />
         </svg>
       </div>
-      <h3 class="mt-4 text-xl font-medium text-sillar">Vista Panoramica</h3>
+      <h3 class="mt-4 text-xl font-medium text-sillar">{tr.features.items[2].title}</h3>
       <p class="mt-2 text-sm leading-relaxed text-slate-300">
-        Amaneceres del Colca y cielos profundos sin contaminacion visual en primera fila.
+        {tr.features.items[2].body}
       </p>
     </article>
   </div>

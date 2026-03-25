@@ -1,6 +1,12 @@
 ---
-const whatsappLink =
-  "https://wa.me/51999999999?text=Hola%20Colca%20Star%20Domes%2C%20quiero%20informacion%20sobre%20disponibilidad.";
+import { getLangFromPath, getSwitchHref, t } from "../i18n";
+
+const lang = getLangFromPath(Astro.url.pathname);
+const tr = t(lang);
+
+const whatsappNumber = (import.meta.env.PUBLIC_WHATSAPP_NUMBER ?? "").trim() || "51999999999";
+const whatsappLink = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(tr.header.whatsappText)}`;
+const switchHref = getSwitchHref(Astro.url.pathname);
 ---
 
 <header class="fixed inset-x-0 top-0 z-40 border-b border-slate-800/80 bg-slate-950/70 backdrop-blur">
@@ -10,11 +16,18 @@ const whatsappLink =
     </a>
 
     <div class="hidden items-center gap-6 md:flex">
-      <a href="#features" class="text-sm text-slate-200 transition hover:text-gold">Experiencia</a>
-      <a href="#packages" class="text-sm text-slate-200 transition hover:text-gold">Paquetes</a>
-      <a href="#gallery" class="text-sm text-slate-200 transition hover:text-gold">Galeria</a>
+      <a href="#features" class="text-sm text-slate-200 transition hover:text-gold">{tr.header.experience}</a>
+      <a href="#packages" class="text-sm text-slate-200 transition hover:text-gold">{tr.header.packages}</a>
+      <a href="#gallery" class="text-sm text-slate-200 transition hover:text-gold">{tr.header.gallery}</a>
       <a href="#faq" class="text-sm text-slate-200 transition hover:text-gold">FAQ</a>
-      <a href="#contact" class="text-sm text-slate-200 transition hover:text-gold">Contacto</a>
+      <a href="#contact" class="text-sm text-slate-200 transition hover:text-gold">{tr.header.contact}</a>
+      <a
+        href={switchHref}
+        class="rounded-full border border-slate-700 px-3 py-1 text-xs font-medium text-slate-200 transition hover:bg-slate-800/60"
+        aria-label="Switch language"
+      >
+        {tr.header.langLabel}
+      </a>
     </div>
 
     <a
@@ -23,7 +36,7 @@ const whatsappLink =
       rel="noopener noreferrer"
       class="inline-flex items-center justify-center rounded-full border border-gold px-4 py-2 text-xs font-medium text-gold transition hover:bg-gold/10 sm:text-sm"
     >
-      Reservar
+      {tr.header.book}
     </a>
   </nav>
 </header>

@@ -1,6 +1,10 @@
 ---
-const whatsappLink =
-  "https://wa.me/51999999999?text=Hola%20Colca%20Star%20Domes%2C%20quiero%20informacion%20sobre%20disponibilidad.";
+import { getLangFromPath, t } from "../i18n";
+const lang = getLangFromPath(Astro.url.pathname);
+const tr = t(lang);
+
+const whatsappNumber = (import.meta.env.PUBLIC_WHATSAPP_NUMBER ?? "").trim() || "51999999999";
+const whatsappLink = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(tr.footer.whatsappText)}`;
 ---
 
 <footer id="contact" class="scroll-mt-28 mt-8 border-t border-slate-800 bg-slate-950/60">
@@ -8,31 +12,31 @@ const whatsappLink =
     <div>
       <p class="text-xs uppercase tracking-[0.2em] text-gold">Colca Star Domes</p>
       <p class="mt-3 text-sm leading-relaxed text-slate-300">
-        Glamping de lujo y noches de astrofotografia en el Valle del Colca, Arequipa, Peru.
+        {tr.footer.about}
       </p>
     </div>
 
     <div>
-      <p class="text-sm font-semibold text-sillar">Explora</p>
+      <p class="text-sm font-semibold text-sillar">{tr.footer.explore}</p>
       <ul class="mt-3 space-y-2 text-sm text-slate-300">
-        <li><a href="#inicio" class="transition hover:text-gold">Inicio</a></li>
-        <li><a href="#features" class="transition hover:text-gold">Experiencia</a></li>
-        <li><a href="#packages" class="transition hover:text-gold">Paquetes</a></li>
-        <li><a href="#gallery" class="transition hover:text-gold">Galeria</a></li>
+        <li><a href="#inicio" class="transition hover:text-gold">{tr.footer.home}</a></li>
+        <li><a href="#features" class="transition hover:text-gold">{tr.header.experience}</a></li>
+        <li><a href="#packages" class="transition hover:text-gold">{tr.header.packages}</a></li>
+        <li><a href="#gallery" class="transition hover:text-gold">{tr.header.gallery}</a></li>
         <li><a href="#faq" class="transition hover:text-gold">FAQ</a></li>
       </ul>
     </div>
 
     <div>
-      <p class="text-sm font-semibold text-sillar">Contacto</p>
+      <p class="text-sm font-semibold text-sillar">{tr.footer.contact}</p>
       <ul class="mt-3 space-y-2 text-sm text-slate-300">
         <li>Arequipa, Peru</li>
         <li>
           <a href={whatsappLink} target="_blank" rel="noopener noreferrer" class="transition hover:text-gold">
-            WhatsApp reservas
+            {tr.footer.whatsapp}
           </a>
         </li>
-        <li><a href="#prebook" class="transition hover:text-gold">Formulario de pre-reserva</a></li>
+        <li><a href="#prebook" class="transition hover:text-gold">{tr.footer.prebook}</a></li>
         <li>
           <a href="mailto:reservas@colcastardomes.com" class="transition hover:text-gold">
             reservas@colcastardomes.com
@@ -44,8 +48,8 @@ const whatsappLink =
 
   <div class="border-t border-slate-800/80">
     <div class="mx-auto flex w-full max-w-6xl flex-col items-center justify-between gap-2 px-4 py-4 text-xs text-slate-400 sm:flex-row sm:px-6 lg:px-8">
-      <p>© {new Date().getFullYear()} Colca Star Domes.</p>
-      <p>Luxury glamping experience in the Colca Valley.</p>
+      <p>{tr.footer.copyrightSuffix.replace("{year}", String(new Date().getFullYear()))}</p>
+      <p>{tr.footer.tagline}</p>
     </div>
   </div>
 </footer>

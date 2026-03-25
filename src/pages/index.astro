@@ -9,12 +9,14 @@ import PreBooking from "../components/PreBooking.astro";
 import Faq from "../components/Faq.astro";
 import Footer from "../components/Footer.astro";
 import StickyFooter from "../components/StickyFooter.astro";
+import { t } from "../i18n";
 
+const tr = t("es");
 ---
 
 <Layout
-  title="Colca Star Domes | Glamping de lujo en Arequipa"
-  description="Vive una experiencia de glamping de lujo en Colca Star Domes: noches de cielo profundo, domos exclusivos y confort premium en el Valle del Colca."
+  title={tr.page.homeTitle}
+  description={tr.page.homeDesc}
 >
   <Header />
   <Hero />

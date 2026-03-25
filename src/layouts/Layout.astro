@@ -1,18 +1,22 @@
 ---
 import "../styles/global.css";
+import { getLangFromPath, t } from "../i18n";
 
 interface Props {
   title?: string;
   description?: string;
 }
 
+const lang = getLangFromPath(Astro.url.pathname);
+const tr = t(lang);
+
 const {
-  title = "Colca Star Domes | Glamping de lujo bajo las estrellas",
-  description = "Experimenta una noche de glamping de lujo bajo el cielo más limpio del Valle del Colca, en Arequipa, Perú.",
+  title = tr.layout.titleDefault,
+  description = tr.layout.descDefault,
 }: Props = Astro.props;
 ---
 
-<html lang="es" class="scroll-smooth">
+<html lang={lang} class="scroll-smooth">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
