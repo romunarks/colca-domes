@@ -4,7 +4,8 @@ import { getSupabaseAdmin } from "../../lib/server/supabase";
 import { listRecentBookingLeads, listUpcomingReservations, type BookingLeadRow, type ReservationRow } from "../../lib/server/booking";
 import { requireAdminAuth } from "../../lib/server/adminAuth";
 
-const lang = Astro.props.lang === "en" ? "en" : "es";
+const queryLang = Astro.url.searchParams.get("lang");
+const lang = Astro.url.pathname.startsWith("/en/") || queryLang === "en" ? "en" : "es";
 const copy =
   lang === "en"
     ? {
@@ -112,7 +113,7 @@ const copy =
         alertCreateOk: "Reserva creada.",
       };
 
-const adminLangHref = lang === "en" ? "/admin/leads" : "/en/admin/leads";
+const adminLangHref = lang === "en" ? "/admin/leads?lang=es" : "/admin/leads?lang=en";
 const adminLangLabel = lang === "en" ? "Ver admin en Espanol" : "View admin in English";
 
 const auth = requireAdminAuth(Astro.request);
