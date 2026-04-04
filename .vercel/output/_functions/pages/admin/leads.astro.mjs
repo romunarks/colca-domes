@@ -16,17 +16,22 @@ const $$Leads = createComponent(async ($$result, $$props, $$slots) => {
   let reservations = [];
   let loadError = "";
   let reservationsError = "";
-  const supabase = getSupabaseAdmin();
+  let supabase = null;
   try {
+    supabase = getSupabaseAdmin();
     leads = await listRecentBookingLeads(supabase, 100);
   } catch (error) {
     loadError = error instanceof Error ? error.message : "No se pudo cargar la lista de leads.";
   }
-  try {
-    reservations = await listUpcomingReservations(supabase, 150);
-  } catch (error) {
-    reservationsError = error instanceof Error ? error.message : "No se pudieron cargar las reservas.";
-    reservations = [];
+  if (supabase) {
+    try {
+      reservations = await listUpcomingReservations(supabase, 150);
+    } catch (error) {
+      reservationsError = error instanceof Error ? error.message : "No se pudieron cargar las reservas.";
+      reservations = [];
+    }
+  } else {
+    reservationsError = "No se pudo inicializar la conexion de base de datos.";
   }
   const totals = {
     all: leads.length,
