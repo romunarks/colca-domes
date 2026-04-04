@@ -11,7 +11,7 @@ Incluye:
 - disponibilidad y datos en Supabase
 
 ### Stack
-- Astro (server output con `@astrojs/node`)
+- Astro (server output con `@astrojs/vercel`)
 - TypeScript
 - Tailwind CSS
 - Supabase (PostgreSQL + API)
@@ -23,6 +23,27 @@ npm install
 cp .env.example .env
 npm run dev
 ```
+
+### Deploy gratis (Vercel) - guía rápida
+
+1. Sube este repositorio a GitHub.
+2. Entra a [vercel.com](https://vercel.com) con tu cuenta GitHub.
+3. Click en **Add New -> Project** y selecciona el repo.
+4. Vercel detecta Astro automáticamente:
+   - Build command: `npm run build`
+   - Output: se configura por adapter (`@astrojs/vercel`)
+5. En **Environment Variables** agrega:
+   - `SUPABASE_URL`
+   - `SUPABASE_SERVICE_ROLE_KEY`
+   - `TOTAL_DOMES` (opcional, ej. `6`)
+   - `BASE_RATE_PEN` (opcional, ej. `420`)
+   - `ADMIN_DASHBOARD_KEY` (recomendado)
+6. Click en **Deploy**.
+7. Antes de usar formularios en producción, ejecuta `supabase/schema.sql` en tu proyecto Supabase.
+
+Notas:
+- Nunca publiques `SUPABASE_SERVICE_ROLE_KEY` en frontend.
+- Cada cambio en `main` dispara deploy automático gratis (Hobby plan).
 
 ### Base de datos (Supabase)
 
@@ -49,7 +70,7 @@ It includes:
 
 ## Stack
 
-- `Astro` (server output with `@astrojs/node`)
+- `Astro` (server output with `@astrojs/vercel`)
 - `TypeScript`
 - `Tailwind CSS`
 - `Supabase` (PostgreSQL + API via `@supabase/supabase-js`)
