@@ -4,6 +4,117 @@ import { getSupabaseAdmin } from "../../lib/server/supabase";
 import { listRecentBookingLeads, listUpcomingReservations, type BookingLeadRow, type ReservationRow } from "../../lib/server/booking";
 import { requireAdminAuth } from "../../lib/server/adminAuth";
 
+const lang = Astro.props.lang === "en" ? "en" : "es";
+const copy =
+  lang === "en"
+    ? {
+        title: "Admin Dashboard | Colca Star Domes",
+        description: "Internal dashboard for leads and reservations.",
+        eyebrow: "Admin dashboard",
+        heading: "Pre-booking leads",
+        subtitle: "This view shows leads stored in database before opening WhatsApp.",
+        backToLanding: "Back to landing",
+        dataErrorTitle: "Could not load data",
+        totalLeads: "Total leads",
+        newLeads: "New",
+        contactedLeads: "Contacted",
+        closedLeads: "Closed",
+        activeReservations: "Active reservations",
+        confirmedReservations: "Confirmed",
+        pendingReservations: "Pending",
+        thDate: "Date",
+        thLead: "Lead",
+        thStay: "Stay",
+        thGuests: "Guests",
+        thStatus: "Status",
+        thEstimate: "Estimate",
+        thNotes: "Notes",
+        thActions: "Actions",
+        noLeads: "No leads yet.",
+        whatsappCta: "WhatsApp",
+        domes: "Domes",
+        status: "Status",
+        createReservation: "Convert to reservation",
+        reservationsTitle: "Reservations (pending/confirmed)",
+        refresh: "Refresh",
+        reservationsErrorPrefix: "Could not load reservations",
+        reservationsErrorHint: "Run the latest `supabase/schema.sql` (adds `reservations.lead_id`).",
+        rCheckIn: "Check-in",
+        rCheckOut: "Check-out",
+        rAssigned: "Assigned",
+        rLead: "Lead",
+        noReservations: "No active reservations yet.",
+        assignDomes: "Assign domes",
+        cancel: "Cancel",
+        delete: "Delete",
+        alertStatusUpdateFail: "Could not update lead status.",
+        alertRefreshFail: "Could not refresh reservations.",
+        promptAssignDomes: "Enter dome codes separated by commas.\nAvailable: {codes}\n\nExample: DOME-01,DOME-03",
+        alertAssignFail: "Could not assign domes.",
+        alertAssignedOk: "Domes assigned.",
+        confirmCancel: "Cancel this reservation?",
+        alertCancelFail: "Could not cancel reservation.",
+        confirmDelete: "DELETE this reservation permanently?",
+        alertDeleteFail: "Could not delete reservation.",
+        alertCreateFail: "Could not create reservation.",
+        alertCreateOk: "Reservation created.",
+      }
+    : {
+        title: "Admin Leads | Colca Star Domes",
+        description: "Vista interna de pre-reservas registradas desde la web.",
+        eyebrow: "Admin dashboard",
+        heading: "Leads de pre-reserva",
+        subtitle: "Esta vista muestra los leads guardados en base de datos antes de abrir WhatsApp.",
+        backToLanding: "Volver a la landing",
+        dataErrorTitle: "No se pudo cargar la data",
+        totalLeads: "Total leads",
+        newLeads: "Nuevos",
+        contactedLeads: "Contactados",
+        closedLeads: "Cerrados",
+        activeReservations: "Reservas activas",
+        confirmedReservations: "Confirmadas",
+        pendingReservations: "Pendientes",
+        thDate: "Fecha",
+        thLead: "Lead",
+        thStay: "Estadia",
+        thGuests: "Huespedes",
+        thStatus: "Estado",
+        thEstimate: "Estimado",
+        thNotes: "Notas",
+        thActions: "Acciones",
+        noLeads: "Aun no hay leads registrados.",
+        whatsappCta: "WhatsApp",
+        domes: "Domos",
+        status: "Estado",
+        createReservation: "Convertir a reserva",
+        reservationsTitle: "Reservas (pendientes/confirmadas)",
+        refresh: "Refrescar",
+        reservationsErrorPrefix: "No se pudieron cargar reservas",
+        reservationsErrorHint: "Ejecuta el `supabase/schema.sql` actualizado (añade `reservations.lead_id`).",
+        rCheckIn: "Check-in",
+        rCheckOut: "Check-out",
+        rAssigned: "Asignados",
+        rLead: "Lead",
+        noReservations: "Aun no hay reservas activas.",
+        assignDomes: "Asignar domos",
+        cancel: "Cancelar",
+        delete: "Borrar",
+        alertStatusUpdateFail: "No se pudo actualizar el estado.",
+        alertRefreshFail: "No se pudo refrescar reservas.",
+        promptAssignDomes: "Escribe los codigos de domo separados por coma.\nDisponibles: {codes}\n\nEj: DOME-01,DOME-03",
+        alertAssignFail: "No se pudo asignar domos.",
+        alertAssignedOk: "Domos asignados.",
+        confirmCancel: "Cancelar esta reserva?",
+        alertCancelFail: "No se pudo cancelar.",
+        confirmDelete: "BORRAR esta reserva definitivamente?",
+        alertDeleteFail: "No se pudo borrar.",
+        alertCreateFail: "No se pudo crear la reserva.",
+        alertCreateOk: "Reserva creada.",
+      };
+
+const adminLangHref = lang === "en" ? "/admin/leads" : "/en/admin/leads";
+const adminLangLabel = lang === "en" ? "Ver admin en Espanol" : "View admin in English";
+
 const auth = requireAdminAuth(Astro.request);
 if (!auth.ok) return auth.response;
 
@@ -53,28 +164,36 @@ const formatDateTime = (value: string) =>
 const whatsappNumber = (import.meta.env.PUBLIC_WHATSAPP_NUMBER ?? "").trim() || "51999999999";
 ---
 
-<Layout title="Admin Leads | Colca Star Domes" description="Vista interna de pre-reservas registradas desde la web.">
+<Layout title={copy.title} description={copy.description}>
   <section class="mx-auto w-full max-w-7xl px-4 pb-14 pt-24 sm:px-6 lg:px-8">
     <div class="mb-8 flex flex-wrap items-end justify-between gap-4">
       <div>
-        <p class="text-xs uppercase tracking-[0.2em] text-gold">Admin dashboard</p>
-        <h1 class="mt-2 text-3xl font-semibold text-sillar">Leads de pre-reserva</h1>
+        <p class="text-xs uppercase tracking-[0.2em] text-gold">{copy.eyebrow}</p>
+        <h1 class="mt-2 text-3xl font-semibold text-sillar">{copy.heading}</h1>
         <p class="mt-2 text-sm text-slate-300">
-          Esta vista muestra los leads guardados en base de datos antes de abrir WhatsApp.
+          {copy.subtitle}
         </p>
       </div>
-      <a
-        href="/"
-        class="inline-flex items-center justify-center rounded-full border border-gold px-4 py-2 text-sm font-medium text-gold transition hover:bg-gold/10"
-      >
-        Volver a la landing
-      </a>
+      <div class="flex flex-col gap-2 sm:flex-row">
+        <a
+          href={adminLangHref}
+          class="inline-flex items-center justify-center rounded-full bg-gold px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-amber-300"
+        >
+          {adminLangLabel}
+        </a>
+        <a
+          href={lang === "en" ? "/en" : "/"}
+          class="inline-flex items-center justify-center rounded-full border border-gold px-4 py-2 text-sm font-medium text-gold transition hover:bg-gold/10"
+        >
+          {copy.backToLanding}
+        </a>
+      </div>
     </div>
 
     {
       loadError && (
         <div class="rounded-2xl border border-rose-500/40 bg-rose-500/10 p-5 text-rose-100">
-          <p class="text-sm font-medium">No se pudo cargar la data</p>
+          <p class="text-sm font-medium">{copy.dataErrorTitle}</p>
           <p class="mt-2 text-sm">{loadError}</p>
         </div>
       )
@@ -85,34 +204,34 @@ const whatsappNumber = (import.meta.env.PUBLIC_WHATSAPP_NUMBER ?? "").trim() || 
         <>
           <div class="grid grid-cols-2 gap-4 md:grid-cols-4">
             <article class="rounded-2xl border border-slate-800 bg-slate-900/60 p-4">
-              <p class="text-xs uppercase tracking-[0.15em] text-slate-400">Total leads</p>
+              <p class="text-xs uppercase tracking-[0.15em] text-slate-400">{copy.totalLeads}</p>
               <p class="mt-2 text-2xl font-semibold text-sillar">{totals.all}</p>
             </article>
             <article class="rounded-2xl border border-slate-800 bg-slate-900/60 p-4">
-              <p class="text-xs uppercase tracking-[0.15em] text-slate-400">Nuevos</p>
+              <p class="text-xs uppercase tracking-[0.15em] text-slate-400">{copy.newLeads}</p>
               <p class="mt-2 text-2xl font-semibold text-amber-300">{totals.new}</p>
             </article>
             <article class="rounded-2xl border border-slate-800 bg-slate-900/60 p-4">
-              <p class="text-xs uppercase tracking-[0.15em] text-slate-400">Contactados</p>
+              <p class="text-xs uppercase tracking-[0.15em] text-slate-400">{copy.contactedLeads}</p>
               <p class="mt-2 text-2xl font-semibold text-sky-300">{totals.contacted}</p>
             </article>
             <article class="rounded-2xl border border-slate-800 bg-slate-900/60 p-4">
-              <p class="text-xs uppercase tracking-[0.15em] text-slate-400">Cerrados</p>
+              <p class="text-xs uppercase tracking-[0.15em] text-slate-400">{copy.closedLeads}</p>
               <p class="mt-2 text-2xl font-semibold text-emerald-300">{totals.closed}</p>
             </article>
           </div>
 
           <div class="mt-4 grid grid-cols-2 gap-4 md:grid-cols-3">
             <article class="rounded-2xl border border-slate-800 bg-slate-900/60 p-4">
-              <p class="text-xs uppercase tracking-[0.15em] text-slate-400">Reservas activas</p>
+              <p class="text-xs uppercase tracking-[0.15em] text-slate-400">{copy.activeReservations}</p>
               <p class="mt-2 text-2xl font-semibold text-sillar">{reservationTotals.all}</p>
             </article>
             <article class="rounded-2xl border border-slate-800 bg-slate-900/60 p-4">
-              <p class="text-xs uppercase tracking-[0.15em] text-slate-400">Confirmadas</p>
+              <p class="text-xs uppercase tracking-[0.15em] text-slate-400">{copy.confirmedReservations}</p>
               <p class="mt-2 text-2xl font-semibold text-emerald-300">{reservationTotals.confirmed}</p>
             </article>
             <article class="rounded-2xl border border-slate-800 bg-slate-900/60 p-4">
-              <p class="text-xs uppercase tracking-[0.15em] text-slate-400">Pendientes</p>
+              <p class="text-xs uppercase tracking-[0.15em] text-slate-400">{copy.pendingReservations}</p>
               <p class="mt-2 text-2xl font-semibold text-amber-300">{reservationTotals.pending}</p>
             </article>
           </div>
@@ -122,14 +241,14 @@ const whatsappNumber = (import.meta.env.PUBLIC_WHATSAPP_NUMBER ?? "").trim() || 
               <table class="min-w-full text-left text-sm">
                 <thead class="bg-slate-950/70 text-xs uppercase tracking-[0.12em] text-slate-400">
                   <tr>
-                    <th class="px-4 py-3">Fecha</th>
-                    <th class="px-4 py-3">Lead</th>
-                    <th class="px-4 py-3">Estadia</th>
-                    <th class="px-4 py-3">Huespedes</th>
-                    <th class="px-4 py-3">Estado</th>
-                    <th class="px-4 py-3">Estimado</th>
-                    <th class="px-4 py-3">Notas</th>
-                    <th class="px-4 py-3">Acciones</th>
+                    <th class="px-4 py-3">{copy.thDate}</th>
+                    <th class="px-4 py-3">{copy.thLead}</th>
+                    <th class="px-4 py-3">{copy.thStay}</th>
+                    <th class="px-4 py-3">{copy.thGuests}</th>
+                    <th class="px-4 py-3">{copy.thStatus}</th>
+                    <th class="px-4 py-3">{copy.thEstimate}</th>
+                    <th class="px-4 py-3">{copy.thNotes}</th>
+                    <th class="px-4 py-3">{copy.thActions}</th>
                   </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-800">
@@ -137,7 +256,7 @@ const whatsappNumber = (import.meta.env.PUBLIC_WHATSAPP_NUMBER ?? "").trim() || 
                     leads.length === 0 ? (
                       <tr>
                         <td colspan="8" class="px-4 py-6 text-center text-slate-300">
-                          Aun no hay leads registrados.
+                          {copy.noLeads}
                         </td>
                       </tr>
                     ) : (
@@ -185,7 +304,7 @@ const whatsappNumber = (import.meta.env.PUBLIC_WHATSAPP_NUMBER ?? "").trim() || 
                               </a>
                               <div class="flex items-center gap-2 rounded-full border border-slate-800 bg-slate-950/40 px-3 py-1">
                                 <label class="text-[11px] text-slate-400">
-                                  Domos
+                                  {copy.domes}
                                   <input
                                     type="number"
                                     min="1"
@@ -197,7 +316,7 @@ const whatsappNumber = (import.meta.env.PUBLIC_WHATSAPP_NUMBER ?? "").trim() || 
                                   />
                                 </label>
                                 <label class="text-[11px] text-slate-400">
-                                  Estado
+                                  {copy.status}
                                   <select
                                     class="ml-2 rounded-lg border border-slate-700 bg-slate-950/60 px-2 py-1 text-xs text-slate-100"
                                     data-res-status
@@ -214,7 +333,7 @@ const whatsappNumber = (import.meta.env.PUBLIC_WHATSAPP_NUMBER ?? "").trim() || 
                                 data-create-reservation
                                 data-lead-id={lead.id}
                               >
-                                Convertir a reserva
+                                {copy.createReservation}
                               </button>
                             </div>
                           </td>
@@ -229,32 +348,31 @@ const whatsappNumber = (import.meta.env.PUBLIC_WHATSAPP_NUMBER ?? "").trim() || 
 
           <div class="mt-8 overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/60">
             <div class="flex items-center justify-between gap-4 border-b border-slate-800 bg-slate-950/40 px-4 py-3">
-              <p class="text-xs uppercase tracking-[0.12em] text-slate-400">Reservas (pendientes/confirmadas)</p>
+              <p class="text-xs uppercase tracking-[0.12em] text-slate-400">{copy.reservationsTitle}</p>
               <button
                 type="button"
                 class="rounded-full border border-slate-700 px-3 py-1 text-xs text-slate-200 transition hover:bg-slate-800/60"
                 data-refresh-reservations
               >
-                Refrescar
+                {copy.refresh}
               </button>
             </div>
             {reservationsError && (
               <div class="border-b border-slate-800 px-4 py-3 text-xs text-amber-200">
-                No se pudieron cargar reservas: {reservationsError}. Ejecuta el `supabase/schema.sql` actualizado (añade
-                `reservations.lead_id`).
+                {copy.reservationsErrorPrefix}: {reservationsError}. {copy.reservationsErrorHint}
               </div>
             )}
             <div class="overflow-x-auto">
               <table class="min-w-full text-left text-sm">
                 <thead class="bg-slate-950/70 text-xs uppercase tracking-[0.12em] text-slate-400">
                   <tr>
-                    <th class="px-4 py-3">Check-in</th>
-                    <th class="px-4 py-3">Check-out</th>
-                    <th class="px-4 py-3">Domos</th>
-                    <th class="px-4 py-3">Asignados</th>
-                    <th class="px-4 py-3">Estado</th>
-                    <th class="px-4 py-3">Lead</th>
-                    <th class="px-4 py-3">Acciones</th>
+                    <th class="px-4 py-3">{copy.rCheckIn}</th>
+                    <th class="px-4 py-3">{copy.rCheckOut}</th>
+                    <th class="px-4 py-3">{copy.domes}</th>
+                    <th class="px-4 py-3">{copy.rAssigned}</th>
+                    <th class="px-4 py-3">{copy.thStatus}</th>
+                    <th class="px-4 py-3">{copy.rLead}</th>
+                    <th class="px-4 py-3">{copy.thActions}</th>
                   </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-800" id="reservations-body">
@@ -262,7 +380,7 @@ const whatsappNumber = (import.meta.env.PUBLIC_WHATSAPP_NUMBER ?? "").trim() || 
                     reservations.length === 0 ? (
                       <tr>
                         <td colspan="7" class="px-4 py-6 text-center text-slate-300">
-                          Aun no hay reservas activas.
+                          {copy.noReservations}
                         </td>
                       </tr>
                     ) : (
@@ -286,7 +404,7 @@ const whatsappNumber = (import.meta.env.PUBLIC_WHATSAPP_NUMBER ?? "").trim() || 
                                 data-assign-domes
                                 data-reservation-id={r.id}
                               >
-                                Asignar domos
+                                {copy.assignDomes}
                               </button>
                               <button
                                 type="button"
@@ -294,7 +412,7 @@ const whatsappNumber = (import.meta.env.PUBLIC_WHATSAPP_NUMBER ?? "").trim() || 
                                 data-cancel-reservation
                                 data-reservation-id={r.id}
                               >
-                                Cancelar
+                                {copy.cancel}
                               </button>
                               <button
                                 type="button"
@@ -302,7 +420,7 @@ const whatsappNumber = (import.meta.env.PUBLIC_WHATSAPP_NUMBER ?? "").trim() || 
                                 data-delete-reservation
                                 data-reservation-id={r.id}
                               >
-                                Borrar
+                                {copy.delete}
                               </button>
                             </div>
                           </td>
@@ -320,10 +438,10 @@ const whatsappNumber = (import.meta.env.PUBLIC_WHATSAPP_NUMBER ?? "").trim() || 
   </section>
 </Layout>
 
-<script>
+<script define:vars={{ copy }}>
   const jsonHeaders = { "Content-Type": "application/json" };
 
-  const postJson = async (url: string, payload: unknown) => {
+  const postJson = async (url, payload) => {
     const response = await fetch(url, {
       method: "POST",
       headers: jsonHeaders,
@@ -348,7 +466,7 @@ const whatsappNumber = (import.meta.env.PUBLIC_WHATSAPP_NUMBER ?? "").trim() || 
     const result = await postJson("/api/admin/leads/status", { leadId, status });
     if (!result.ok || !result.data?.ok) {
       if (previous) target.value = previous;
-      alert(result.data?.message ?? "No se pudo actualizar el estado.");
+      alert(result.data?.message ?? copy.alertStatusUpdateFail);
     }
   });
 
@@ -362,7 +480,7 @@ const whatsappNumber = (import.meta.env.PUBLIC_WHATSAPP_NUMBER ?? "").trim() || 
       const data = await response.json().catch(() => ({}));
       if (!response.ok || !data?.ok) {
         refresh.disabled = false;
-        alert(data?.message ?? "No se pudo refrescar reservas.");
+        alert(data?.message ?? copy.alertRefreshFail);
         return;
       }
 
@@ -372,10 +490,10 @@ const whatsappNumber = (import.meta.env.PUBLIC_WHATSAPP_NUMBER ?? "").trim() || 
         return;
       }
 
-      const rows = (data.reservations ?? []) as Array<any>;
+      const rows = data.reservations ?? [];
       body.innerHTML =
         rows.length === 0
-          ? `<tr><td colspan="7" class="px-4 py-6 text-center text-slate-300">Aun no hay reservas activas.</td></tr>`
+          ? `<tr><td colspan="7" class="px-4 py-6 text-center text-slate-300">${copy.noReservations}</td></tr>`
           : rows
               .map(
                 (r) => `<tr class="text-slate-100">
@@ -407,12 +525,9 @@ const whatsappNumber = (import.meta.env.PUBLIC_WHATSAPP_NUMBER ?? "").trim() || 
 
       const domesRes = await fetch("/api/admin/domes");
       const domesData = await domesRes.json().catch(() => ({}));
-      const availableCodes = (domesData.domes ?? []).map((d: any) => d.code).join(", ");
+      const availableCodes = (domesData.domes ?? []).map((d) => d.code).join(", ");
 
-      const input = prompt(
-        `Escribe los codigos de domo separados por coma.\nDisponibles: ${availableCodes}\n\nEj: DOME-01,DOME-03`,
-        ""
-      );
+      const input = prompt(copy.promptAssignDomes.replace("{codes}", availableCodes), "");
       if (input === null) return;
       const domeCodes = input
         .split(",")
@@ -423,11 +538,11 @@ const whatsappNumber = (import.meta.env.PUBLIC_WHATSAPP_NUMBER ?? "").trim() || 
       const result = await postJson("/api/admin/reservations/assign", { reservationId, domeCodes });
       assign.disabled = false;
       if (!result.ok || !result.data?.ok) {
-        alert(result.data?.message ?? "No se pudo asignar domos.");
+        alert(result.data?.message ?? copy.alertAssignFail);
         return;
       }
 
-      alert("Domos asignados.");
+      alert(copy.alertAssignedOk);
       window.location.reload();
       return;
     }
@@ -436,12 +551,12 @@ const whatsappNumber = (import.meta.env.PUBLIC_WHATSAPP_NUMBER ?? "").trim() || 
     if (cancel instanceof HTMLButtonElement) {
       const reservationId = cancel.getAttribute("data-reservation-id") ?? "";
       if (!reservationId) return;
-      if (!confirm("Cancelar esta reserva?")) return;
+      if (!confirm(copy.confirmCancel)) return;
       cancel.disabled = true;
       const result = await postJson("/api/admin/reservations/cancel", { reservationId });
       if (!result.ok || !result.data?.ok) {
         cancel.disabled = false;
-        alert(result.data?.message ?? "No se pudo cancelar.");
+        alert(result.data?.message ?? copy.alertCancelFail);
         return;
       }
       window.location.reload();
@@ -452,12 +567,12 @@ const whatsappNumber = (import.meta.env.PUBLIC_WHATSAPP_NUMBER ?? "").trim() || 
     if (del instanceof HTMLButtonElement) {
       const reservationId = del.getAttribute("data-reservation-id") ?? "";
       if (!reservationId) return;
-      if (!confirm("BORRAR esta reserva definitivamente?")) return;
+      if (!confirm(copy.confirmDelete)) return;
       del.disabled = true;
       const result = await postJson("/api/admin/reservations/delete", { reservationId });
       if (!result.ok || !result.data?.ok) {
         del.disabled = false;
-        alert(result.data?.message ?? "No se pudo borrar.");
+        alert(result.data?.message ?? copy.alertDeleteFail);
         return;
       }
       window.location.reload();
@@ -487,11 +602,11 @@ const whatsappNumber = (import.meta.env.PUBLIC_WHATSAPP_NUMBER ?? "").trim() || 
 
     if (!result.ok || !result.data?.ok) {
       button.disabled = false;
-      alert(result.data?.message ?? "No se pudo crear la reserva.");
+      alert(result.data?.message ?? copy.alertCreateFail);
       return;
     }
 
-    alert("Reserva creada.");
+    alert(copy.alertCreateOk);
     window.location.reload();
   });
 </script>
