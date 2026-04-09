@@ -167,11 +167,15 @@ const defaultWhatsApp = `https://wa.me/${whatsappNumber}`;
         submit: "Check availability and send via WhatsApp",
         waIntro: "Hi Colca Star Domes, I'd like to make a pre-booking.",
         waName: "Name",
+        waCheckIn: "Check-in",
+        waCheckOut: "Check-out",
         waGuests: "Guests",
         waConfirmed: "Confirmed availability",
         waEstimate: "Total estimate",
         waCode: "Internal pre-booking code",
         waExtra: "Additional message",
+        domeLabel: "dome(s)",
+        currencyLabel: "PEN",
       }
     : {
         weekdays: ["L", "M", "M", "J", "V", "S", "D"],
@@ -189,11 +193,15 @@ const defaultWhatsApp = `https://wa.me/${whatsappNumber}`;
         submit: "Consultar disponibilidad y enviar por WhatsApp",
         waIntro: "Hola Colca Star Domes, quiero realizar una pre-reserva.",
         waName: "Nombre",
+        waCheckIn: "Check-in",
+        waCheckOut: "Check-out",
         waGuests: "Huéspedes",
         waConfirmed: "Disponibilidad confirmada",
         waEstimate: "Estimado total",
         waCode: "Código interno de pre-reserva",
         waExtra: "Mensaje adicional",
+        domeLabel: "domo(s)",
+        currencyLabel: "S/",
       };
   const form = document.querySelector("#prebooking-form");
 
@@ -489,11 +497,11 @@ const defaultWhatsApp = `https://wa.me/${whatsappNumber}`;
         const messageLines = [
           i18n.waIntro,
           `${i18n.waName}: ${name}`,
-          `Check-in: ${checkin}`,
-          `Check-out: ${checkout}`,
+          `${i18n.waCheckIn}: ${checkin}`,
+          `${i18n.waCheckOut}: ${checkout}`,
           `${i18n.waGuests}: ${guests}`,
-          `${i18n.waConfirmed}: ${availabilityData.availableDomes} domo(s)`,
-          `${i18n.waEstimate}: S/ ${availabilityData.totalEstimate}`,
+          `${i18n.waConfirmed}: ${availabilityData.availableDomes} ${i18n.domeLabel}`,
+          `${i18n.waEstimate}: ${i18n.currencyLabel} ${availabilityData.totalEstimate}`,
           `${i18n.waCode}: ${leadData.leadId}`,
         ];
 

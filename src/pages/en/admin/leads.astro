@@ -1,4 +1,17 @@
 ---
-return Astro.redirect("/admin/leads?lang=en");
 ---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="refresh" content="0;url=/admin/leads?lang=en" />
+    <title>Redirecting...</title>
+  </head>
+  <body style="font-family: sans-serif; background: #0f172a; color: #f8fafc; display: grid; place-items: center; min-height: 100vh;">
+    <p>Redirecting to admin dashboard...</p>
+    <a href="/admin/leads?lang=en" style="color: #fbbf24;">Continue</a>
+  </body>
+</html>
 
