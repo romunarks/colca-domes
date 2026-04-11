@@ -4,8 +4,8 @@ import { getSupabaseAdmin } from "../../lib/server/supabase";
 import { listRecentBookingLeads, listUpcomingReservations, type BookingLeadRow, type ReservationRow } from "../../lib/server/booking";
 import { requireAdminAuth } from "../../lib/server/adminAuth";
 
-const queryLang = Astro.url.searchParams.get("lang");
-const lang = Astro.url.pathname.startsWith("/en/") || queryLang === "en" ? "en" : "es";
+const queryLang = Astro.url.searchParams.get("lang")?.toLowerCase();
+const lang = queryLang === "en" ? "en" : "es";
 const copy =
   lang === "en"
     ? {
@@ -123,8 +123,8 @@ const copy =
         refreshDeleteCta: "Borrar",
       };
 
-const adminLangHref = lang === "en" ? "/admin/leads?lang=es" : "/admin/leads?lang=en";
-const adminLangLabel = lang === "en" ? "Ver admin en Espanol" : "View admin in English";
+const adminEsHref = "/admin/leads?lang=es";
+const adminEnHref = "/admin/leads?lang=en";
 
 const auth = requireAdminAuth(Astro.request);
 if (!auth.ok) return auth.response;
@@ -187,10 +187,24 @@ const whatsappNumber = (import.meta.env.PUBLIC_WHATSAPP_NUMBER ?? "").trim() || 
       </div>
       <div class="flex flex-col gap-2 sm:flex-row">
         <a
-          href={adminLangHref}
-          class="inline-flex items-center justify-center rounded-full bg-gold px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-amber-300"
+          href={adminEsHref}
+          class={`inline-flex items-center justify-center rounded-full px-4 py-2 text-sm font-semibold transition ${
+            lang === "es"
+              ? "bg-gold text-slate-950 hover:bg-amber-300"
+              : "border border-gold text-gold hover:bg-gold/10"
+          }`}
         >
-          {adminLangLabel}
+          Admin en Espanol
+        </a>
+        <a
+          href={adminEnHref}
+          class={`inline-flex items-center justify-center rounded-full px-4 py-2 text-sm font-semibold transition ${
+            lang === "en"
+              ? "bg-gold text-slate-950 hover:bg-amber-300"
+              : "border border-gold text-gold hover:bg-gold/10"
+          }`}
+        >
+          Admin in English
         </a>
         <a
           href={lang === "en" ? "/en" : "/"}
