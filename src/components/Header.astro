@@ -7,6 +7,7 @@ const tr = t(lang);
 const whatsappNumber = (import.meta.env.PUBLIC_WHATSAPP_NUMBER ?? "").trim() || "51999999999";
 const whatsappLink = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(tr.header.whatsappText)}`;
 const switchHref = getSwitchHref(Astro.url.pathname);
+const adminHref = lang === "en" ? "/admin/leads?lang=en" : "/admin/leads?lang=es";
 ---
 
 <header class="fixed inset-x-0 top-0 z-40 border-b border-slate-800/80 bg-slate-950/70 backdrop-blur">
@@ -21,7 +22,7 @@ const switchHref = getSwitchHref(Astro.url.pathname);
       <a href="#gallery" class="text-sm text-slate-200 transition hover:text-gold">{tr.header.gallery}</a>
       <a href="#faq" class="text-sm text-slate-200 transition hover:text-gold">FAQ</a>
       <a href="#contact" class="text-sm text-slate-200 transition hover:text-gold">{tr.header.contact}</a>
-      <a href="/admin/leads?lang=es" class="text-sm text-slate-200 transition hover:text-gold">Admin</a>
+      <a href={adminHref} class="text-sm text-slate-200 transition hover:text-gold">Admin</a>
       <a
         href={switchHref}
         class="rounded-full border border-slate-700 px-3 py-1 text-xs font-medium text-slate-200 transition hover:bg-slate-800/60"
@@ -33,8 +34,8 @@ const switchHref = getSwitchHref(Astro.url.pathname);
 
     <div class="flex items-center gap-2">
       <a
-        href="/admin/leads?lang=es"
-        class="inline-flex items-center justify-center rounded-full border border-slate-700 px-3 py-2 text-xs font-medium text-slate-200 transition hover:bg-slate-800/60 sm:text-sm"
+        href={adminHref}
+        class="inline-flex items-center justify-center rounded-full bg-gold px-3 py-2 text-xs font-semibold text-slate-950 transition hover:bg-amber-300 sm:text-sm"
       >
         Admin
       </a>

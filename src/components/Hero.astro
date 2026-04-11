@@ -2,6 +2,7 @@
 import { getLangFromPath, t } from "../i18n";
 const lang = getLangFromPath(Astro.url.pathname);
 const tr = t(lang);
+const adminHref = lang === "en" ? "/admin/leads?lang=en" : "/admin/leads?lang=es";
 ---
 
 <section id="inicio" class="relative min-h-screen scroll-mt-28 overflow-hidden bg-gradient-to-b from-slate-950 via-slate-900 to-slate-900 px-4 pb-20 pt-24 sm:px-6 lg:px-8">
@@ -34,6 +35,12 @@ const tr = t(lang);
         </a>
         <a href="#gallery" class="text-sm text-slate-200 underline-offset-4 transition hover:text-gold hover:underline">
           {tr.hero.ctaSecondary}
+        </a>
+        <a
+          href={adminHref}
+          class="inline-flex items-center justify-center rounded-full border border-slate-600 px-6 py-3 text-sm font-medium text-slate-200 transition hover:bg-slate-800/60"
+        >
+          {lang === "en" ? "Admin Panel" : "Panel Admin"}
         </a>
       </div>
     </div>
