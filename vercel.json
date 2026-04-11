@@ -1,6 +1,13 @@
 {
   "framework": "astro",
   "installCommand": "npm install",
-  "buildCommand": "npm run build"
+  "buildCommand": "npm run build",
+  "redirects": [
+    {
+      "source": "/en/admin/leads",
+      "destination": "/admin/leads?lang=en",
+      "permanent": false
+    }
+  ]
 }
 
